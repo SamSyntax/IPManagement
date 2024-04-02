@@ -33,9 +33,17 @@ cd ip-addresses-management-tool
 ```
 Install dependencies:
 
+With npm:
 ```bash
 
 npm install
+```
+
+With yarn:
+
+```bash
+
+yarn install
 ```
 
 Configuration

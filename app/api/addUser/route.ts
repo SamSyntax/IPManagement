@@ -18,7 +18,17 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    userInputSchema.safeParse(body);
+    const validation = userInputSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          error: `Input data is invalid`,
+        },
+        { status: 400 }
+      );
+    }
+
     console.log(body.region);
 
     if (body.type === null || body.region === null) {

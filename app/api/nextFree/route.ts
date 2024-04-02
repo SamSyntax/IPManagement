@@ -20,7 +20,16 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // Sprawdź, czy dane wejściowe są poprawne
-    userInputSchema.safeParse(body);
+    const validation = userInputSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          error: `Input data is invalid`,
+        },
+        { status: 400 }
+      );
+    } 
 
     const user = await prisma.user.findFirst({
       where: {

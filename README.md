@@ -28,13 +28,13 @@ git clone <repository_url>
 Navigate to the project directory:
 
 ```bash
-#Copy code
+
 cd ip-addresses-management-tool
 ```
 Install dependencies:
 
 ```bash
-#Copy code
+
 npm install
 ```
 
@@ -44,6 +44,6 @@ Set up your PostgreSQL database and configure the connection in the .env file.
 Run database migrations:
 
 ```bash
-#Copy code
+
 npx prisma migrate dev
 ```

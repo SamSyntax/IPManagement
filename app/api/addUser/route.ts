@@ -29,8 +29,6 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log(body.region);
-
     if (body.type === null || body.region === null) {
       return NextResponse.json(
         { error: "Missing type or region" },
@@ -43,7 +41,6 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log(user);
     if (user && user?.ipAddressId !== null) {
       return NextResponse.json(
         { error: "User already has an IP Address assigned" },
@@ -58,7 +55,6 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log({ ...ipAddress });
     if (!ipAddress) {
       return NextResponse.json(
         { error: "No free IP address available" },
@@ -93,15 +89,15 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        message: `Adres ${ipAddress.address} został przypisany do ${body.simsId}`,
+        message: `IP Address ${ipAddress.region} ${ipAddress.type} ${ipAddress.address} has been assigned to ${body.simsId}`,
       },
       { status: 200 }
     );
   } catch (error) {
-    throw new Error(
-      `Wystąpił błąd podczas dodawania użytkownika: ${
+    return NextResponse.json({
+      error: `Wystąpił błąd podczas dodawania użytkownika: ${
         error instanceof Error ? error.message : String(error)
-      }`
-    );
+      }`,
+    });
   }
 }

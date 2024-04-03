@@ -67,6 +67,7 @@ export async function POST(req: Request) {
         data: {
           simsId: body.simsId,
           ipAddressId: ipAddress.id,
+          ip: ipAddress.address,
         },
       });
     }

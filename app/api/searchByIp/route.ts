@@ -22,7 +22,12 @@ export async function POST(req: Request) {
       where: {
         address: body.ipAddress,
       },
+      include: {
+        user: true,
+      },
     });
+
+
 
     if (!ipAddress) {
       return NextResponse.json(

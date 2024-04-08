@@ -18,7 +18,6 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log(body);
     return NextResponse.json(users, { status: 200 });
   } catch (error) {
     console.error("Error searching for users:", error);

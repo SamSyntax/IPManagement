@@ -39,11 +39,16 @@ export async function POST(req: Request) {
       where: {
         simsId: body.simsId,
       },
+      include: {
+        ipAddress: true,
+      },
     });
 
     if (user && user?.ipAddressId !== null) {
       return NextResponse.json(
-        { error: "User already has an IP Address assigned" },
+        {
+          error: `User already has an IP Address assigned: ${user.ipAddress?.address} type: ${user.ipAddress?.type} region: ${user.ipAddress?.region}`,
+        },
         { status: 405 }
       );
     }

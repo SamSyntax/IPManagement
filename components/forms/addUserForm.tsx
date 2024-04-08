@@ -7,6 +7,14 @@ import { z } from "zod";
 import axios from "axios";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../ui/form";
+import { useRouter } from "next/navigation";
 
 // Define the type of the response data object
 type UserDataResponse = {
@@ -40,6 +48,8 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
     },
   });
 
+  const router = useRouter();
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
@@ -54,10 +64,12 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
         throw new Error("Invalid input");
       }
 
-      const response = await axios.post<UserDataResponse>("/api/addUser", data);
+      const response = await axios.post<UserDataResponse>(
+        "http://localhost:3000/api/addUser",
+        data
+      );
 
       const res = response.data.message;
-      console.log(response);
 
       setSuccessMessage(res.toString());
       setSuccess(true);
@@ -69,44 +81,102 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
         error.response.data &&
         "error" in error.response.data
       ) {
-        console.log(error.response.data.error);
         setError(error.response.data.error); // Set error message
       } else {
         setError("Failed to add user.");
       }
     } finally {
       setSubmitting(false);
+      router.refresh();
     }
+  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    form.setValue("simsId", e.target.value.toUpperCase());
   };
 
   return (
     <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50 backdrop-blur-md z-10">
-      <div className="bg-white p-8 rounded-lg">
-        <h1 className="font-bold text-2xl mb-8">Add User</h1>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+      <div className="bg-white p-16 rounded-lg min-w-[200px] h-[500px] flex flex-wrap flex-col items-baseline justify-center">
+        <h1 className="font-bold text-2xl mb-8 text-center w-full">Add User</h1>
+        {error && (
+          <p className="text-red-500 mb-4 text-wrap w-[250px]">{error}</p>
+        )}
         {success && (
           <p className="text-green-500 mb-4">User added successfully!</p>
         )}
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col items-start justify-center gap-12"
-        >
-          <Input placeholder="SIMSID" {...form.register("simsId")} />
-          <select {...form.register("region")}>
-            <option value="EMEA">EMEA</option>
-            <option value="APAC">APAC</option>
-            <option value="AMERICAS">AMERICAS</option>
-          </select>
-          <select {...form.register("type")}>
-            <option value="P4">P4</option>
-            <option value="P6">P6</option>
-          </select>
-          <Button type="submit" disabled={submitting}>
-            {submitting ? "Submitting..." : "Submit"}
-          </Button>
-          <Button onClick={onClose}>Close</Button>
-        </form>
-        {success && <p>{successMessage}</p>}
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col items-start justify-center gap-6"
+          >
+            <FormField
+              control={form.control}
+              name="simsId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormMessage />
+
+                  <FormControl className="flex flex-col gap-2">
+                    <Input
+                      placeholder="SIMSID"
+                      {...field}
+                      onChange={handleInputChange}
+                      className="w-[280px]"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center justify-end gap-2">
+                <label className="flex items-center justify-center gap-2">
+                  <input
+                    type="radio"
+                    value="EMEA"
+                    {...form.register("region")}
+                  />
+                  EMEA
+                </label>
+                <label className="flex items-center justify-center gap-2">
+                  <input
+                    type="radio"
+                    value="APAC"
+                    {...form.register("region")}
+                  />
+                  APAC
+                </label>
+                <label className="flex items-center justify-center gap-2">
+                  <input
+                    type="radio"
+                    value="AMERICAS"
+                    {...form.register("region")}
+                  />
+                  AMERICAS
+                </label>
+              </div>
+              <div className="flex gap-8 items-center justify-start">
+                <label className="flex items-center justify-center gap-2">
+                  <input type="radio" value="P4" {...form.register("type")} />
+                  P4
+                </label>
+                <label className="flex items-center justify-center gap-2">
+                  <input type="radio" value="P6" {...form.register("type")} />
+                  P6
+                </label>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button type="submit" disabled={submitting}>
+                {submitting ? "Submitting..." : "Submit"}
+              </Button>
+              <Button variant="destructive" onClick={onClose}>
+                Close
+              </Button>
+            </div>
+          </form>
+        </Form>
+        <div>{success && <p className="text-wrap">{successMessage}</p>}</div>
       </div>
     </div>
   );

@@ -80,21 +80,21 @@ export async function POST(req: Request) {
 
       return NextResponse.json(
         {
-          message: `Nowy adres IP: ${freeIp.address} region: ${freeIp.region} typ: ${freeIp.type}.`,
+          message: `A new IP Address: ${freeIp.address} region: ${freeIp.region} type: ${freeIp.type} has been assigned to ${user.simsId}.`,
         },
         { status: 200 }
       );
     } else {
       // Obsługa błędu w przypadku braku użytkownika lub wolnego adresu IP
       return NextResponse.json(
-        { message: "Brak dostępnych adresów IP lub użytkownika" },
+        { message: "No available IP Addresses" },
         { status: 200 }
       );
     }
   } catch (error) {
-    console.error("Błąd podczas walidacji lub przetwarzania żądania:", error);
+    console.error("Request validation error:", error);
     return NextResponse.json(
-      { message: "Błąd przetwarzania żądania", error },
+      { message: "Request validation error", error },
       { status: 500 }
     );
   }

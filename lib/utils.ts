@@ -5,4 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const Links = [{ label: "Home", href: "/" }];
+export const Links = [
+  { label: "Home", href: "/" },
+  { label: "Addresses", href: "/ipAddresses" },
+];

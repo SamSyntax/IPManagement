@@ -2,7 +2,6 @@
 
 import {
   ColumnDef,
-  ColumnFiltersState,
   ColumnFiltersTableState,
   flexRender,
   getCoreRowModel,
@@ -29,7 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import { Input } from "../ui/input";
 import {
@@ -39,21 +38,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Skeleton } from "../ui/skeleton";
+import { parse } from "path";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  filterTarget: string;
+  filterPlaceholder: string;
+  parseData?: TData[];
 }
 
-export function DataTable<TData, TValue>({
+export let parseData: any = [];
+
+export function DataTable<TData extends never[], TValue>({
   columns,
   data,
+  filterTarget,
+  filterPlaceholder,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersTableState>(
+    // @ts-ignore
     []
   );
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
+    {}
+  );
   const table = useReactTable({
     data,
     columns,
@@ -61,15 +72,44 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: setColumnFilters as any,
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,
+      // @ts-ignore
       columnFilters,
       rowSelection,
     },
   });
+
+  const [showSkeletion, setShowSkeleton] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (table.getRowModel().rows.length === 0) {
+        setShowSkeleton(false);
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [table]);
+
+  const [selectedData, setSelectedData] = useState<TData[]>([]);
+
+  useEffect(() => {
+    const newData: TData[] = [];
+    Object.keys(rowSelection).forEach((key) => {
+      const index = parseInt(key, 10); // Convert key to integer
+      if (!isNaN(index) && index >= 0 && index < data.length) {
+        newData.push(data[index].simsId);
+      }
+    });
+    setSelectedData(newData);
+  }, [rowSelection, data]);
+
+  parseData = selectedData;
+
+  console.log(parseData);
 
   return (
     <div className="rounded-md border min-w-[700px] max-w-[900px]">
@@ -77,6 +117,9 @@ export function DataTable<TData, TValue>({
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="flex items-center space-x-6 lg:space-x-8">
+          {/* Add other filters or controls as needed */}
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex items-center space-x-2">
@@ -92,8 +135,8 @@ export function DataTable<TData, TValue>({
                   placeholder={table.getState().pagination.pageSize}
                 />
               </SelectTrigger>
-              <SelectContent side="top">
-                {[10, 20, 30, 40, 50].map((pageSize) => (
+              <SelectContent side="bottom">
+                {[10, 15, 20, 25, 30, 35, 40, 45, 50].map((pageSize) => (
                   <SelectItem key={pageSize} value={`${pageSize}`}>
                     {pageSize}
                   </SelectItem>
@@ -103,12 +146,15 @@ export function DataTable<TData, TValue>({
           </div>
           <div className="flex items-center py-4">
             <Input
-              placeholder="Filter SIMSID..."
+              placeholder={filterPlaceholder}
               value={
-                (table.getColumn("simsId")?.getFilterValue() as string) ?? ""
+                (table.getColumn(filterTarget)?.getFilterValue() as string) ??
+                ""
               }
               onChange={(event) =>
-                table.getColumn("simsId")?.setFilterValue(event.target.value)
+                table
+                  .getColumn(filterTarget)
+                  ?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
             />
@@ -190,10 +236,30 @@ export function DataTable<TData, TValue>({
                 ))}
               </TableRow>
             ))
-          ) : (
+          ) : showSkeletion ? (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                <div className="flex space-x-3">
+                  {columns.map((column, i) => (
+                    <div key={i} className="flex gap-2 w-full">
+                      <div className="flex flex-col gap-1 items-center justify-center">
+                        <Skeleton className="h-8 w-24" />
+                        <Skeleton className="h-4 w-16" />
+                      </div>
+                    </div>
+                  ))}
+                </div>{" "}
+              </TableCell>
+            </TableRow>
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center w-full"
+              >
+                <div className="flex space-x-3 w-full text-center items-center justify-center h-full">
+                  No Results
+                </div>{" "}
               </TableCell>
             </TableRow>
           )}

@@ -45,7 +45,6 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log(ipAddress);
 
     if (ipAddress) {
       await prisma.iPAddress.update({

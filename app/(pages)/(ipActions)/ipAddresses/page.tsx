@@ -5,9 +5,10 @@ export default async function Home({ ...props }) {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="flex flex-wrap items-center justify-center">
         <Search
-          filterTarget="simsId"
-          filterPlaceholder="Search for SIMSID..."
-          endpoint="/api/getAllUsers"
+          filterTarget="address"
+          filterPlaceholder="Search for Address..."
+          endpoint="api/getIps"
+          cols="ip"
         />
       </div>
     </main>

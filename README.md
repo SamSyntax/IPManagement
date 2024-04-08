@@ -23,7 +23,6 @@ Installation
 Clone the repository:
 
 ```bash
-Copy code
 git clone <repository_url>
 ```
 Navigate to the project directory:

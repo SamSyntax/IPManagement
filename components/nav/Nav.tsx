@@ -3,12 +3,16 @@ import React, { useState } from "react";
 import { Links } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import AddUserPopup from "./forms/addUserForm";
-import { Button } from "./ui/button";
+import AddUserPopup from "../forms/addUserForm";
+import { Button } from "../ui/button";
 import Image from "next/image";
-import Logo from "../public/images/schenker_logo.svg";
+import Logo from "@/public/images/schenker_logo.svg";
+import LogoLight from "@/public/images/schenker_logo_light.svg";
+import { ModeToggle } from "./theme-toggle";
+import { useTheme } from "next-themes";
 
 const Nav = () => {
+  const { theme } = useTheme();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   // Function to toggle the visibility of the popup
@@ -23,8 +27,8 @@ const Nav = () => {
           <Link
             className={
               path === link.href
-                ? " font-medium text-rose-700 transition-all ease-in-out duration-400 scale-105"
-                : "font-medium text-zinc-950 transition-all ease-in-out duration-400"
+                ? " font-medium text-primary transition-all ease-in-out duration-400 scale-105"
+                : "font-medium text-muted-foreground transition-all ease-in-out duration-400"
             }
             key={link.label}
             href={link.href}
@@ -35,10 +39,15 @@ const Nav = () => {
       </div>
       <div className="flex items-center justify-center">
         <Link href="/">
-          <Image src={Logo} alt="Logo" width={150} height={150} />
+          {theme === "dark" || theme === "system" ? (
+            <Image src={LogoLight} alt="Logo" width={150} height={150} />
+          ) : (
+            <Image src={Logo} alt="Logo" width={150} height={150} />
+          )}
         </Link>
       </div>
-      <div className="flex">
+      <div className="flex gap-2">
+        <ModeToggle />
         <Button variant="outline" onClick={togglePopup}>
           Add User
         </Button>

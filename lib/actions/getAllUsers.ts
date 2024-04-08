@@ -1,4 +1,4 @@
-import { Vpn } from "@/components/Table/column";
+import { Vpn } from "@/components/table/column";
 import axios from "axios";
 
 export async function getAllUsers(): Promise<Vpn[]> {

@@ -1,11 +1,20 @@
 "use client";
 
-import { CellContext, ColumnDef } from "@tanstack/react-table";
+import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import axios from "axios";
 import { z } from "zod";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { useRouter } from "next/navigation";
+import { parseData } from "./data-table";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -17,32 +26,6 @@ export type Vpn = {
   region: "EMEA" | "APAC" | "AMERICAS";
   toggleRowSelection: (simsId: string) => void;
 };
-
-let selectedRows: SelectedRows = new Set();
-
-export let dataArr: string[] = [];
-
-type SelectedRows = Set<string>;
-function togglePerRowSelection(simsId: string) {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-
-  let newSelectedRows = new Set(selectedRows);
-
-  if (newSelectedRows.has(simsId)) {
-    newSelectedRows.delete(simsId);
-  } else {
-    if (simsId === null) {
-      return;
-    }
-    newSelectedRows.add(simsId);
-    dataArr.push(simsId);
-  }
-
-  selectedRows = newSelectedRows;
-  dataArr = Array.from(newSelectedRows);
-
-  // console.log("Toggling", selectedRows);
-}
 
 export const columns: ColumnDef<Vpn>[] = [
   {
@@ -155,13 +138,10 @@ export const ipColumns: ColumnDef<Vpn>[] = [
         aria-label="Select all"
       />
     ),
-    cell: (props: CellContext<any, any>) => (
+    cell: ({ row }) => (
       <Checkbox
-        checked={props.row.getIsSelected()}
-        onCheckedChange={(value: any) => {
-          togglePerRowSelection(props.row.original.simsId);
-          props.row.toggleSelected(!!value);
-        }}
+        checked={row.getIsSelected()}
+        onCheckedChange={(value: any) => row.toggleSelected(!!value)}
         aria-label="Select row"
       />
     ),
@@ -230,28 +210,69 @@ export const ipColumns: ColumnDef<Vpn>[] = [
   },
   {
     id: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <Button
-        className="p-1 text-xs text-center"
-        variant="ghost"
-        onClick={() => deleteUser(row.original)}
-      >
-        Delete
-      </Button>
-    ),
+    header: ({ column }) => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="p-0 ">
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem>
+              <span className="text-wrap max-w-18">
+                Delete users <br />{" "}
+                {parseData.map((simsId: string) => (
+                  <div key={simsId} className="flex flex-col">
+                    <span>
+                      <b>{simsId}</b>
+                    </span>
+                  </div>
+                ))}
+              </span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="p-0 ">
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => deleteUser(row.original.simsId)}>
+              Delete User
+            </DropdownMenuItem>
+            {row.original.simsId && (
+              <DropdownMenuItem
+                onClick={() =>
+                  assignNextFreeIp(
+                    row.original.simsId,
+                    row.original.type,
+                    row.original.region
+                  )
+                }
+              >
+                Assign next free address of type {row.original.type} in region{" "}
+                {row.original.region}
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
     enableSorting: false,
     enableColumnFilter: false,
   },
 ];
 
-const reqSchema = z.object({
-  simsId: z.string().length(8),
-});
-
-async function deleteUser(userId: any) {
-  const data = reqSchema.safeParse(userId);
-
+async function deleteUser(userId: string) {
   try {
     const response = await axios.post("/api/deleteUser", { simsId: userId });
     console.log(response.data); // Log the response data
@@ -263,6 +284,20 @@ async function deleteUser(userId: any) {
   }
 }
 
-function toggleRowSelection(simsId: any): void {
-  throw new Error("Function not implemented.");
+async function assignNextFreeIp(simsId: string, type: string, region: string) {
+  try {
+    const response = await axios.post("/api/nextFree", {
+      simsId,
+      type,
+      region,
+    });
+    console.log(response.data); // Log the response data
+    // Optionally, you can update the table data after successful assignment
+    // For example, refetch the data or update the assigned IP address in the table
+  } catch (error) {
+    console.error("Error assigning next free IP:", error);
+    // Handle error
+  }
 }
+
+

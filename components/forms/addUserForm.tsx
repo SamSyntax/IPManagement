@@ -95,11 +95,13 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
   };
 
   return (
-    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50 backdrop-blur-md z-10">
-      <div className="bg-white p-16 rounded-lg min-w-[200px] h-[500px] flex flex-wrap flex-col items-baseline justify-center">
+    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-50 backdrop-blur-md z-10">
+      <div className="bg-zinc-800 bg-opacity-50 p-16 rounded-lg min-w-[200px] h-[500px] flex flex-wrap flex-col items-baseline justify-center">
         <h1 className="font-bold text-2xl mb-8 text-center w-full">Add User</h1>
         {error && (
-          <p className="text-red-500 mb-4 text-wrap w-[250px]">{error}</p>
+          <p className=" mb-4 text-accent-foreground text-wrap w-[250px]">
+            {error}
+          </p>
         )}
         {success && (
           <p className="text-green-500 mb-4">User added successfully!</p>
@@ -116,7 +118,7 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
                 <FormItem>
                   <FormMessage />
 
-                  <FormControl className="flex flex-col gap-2">
+                  <FormControl className="flex flex-col gap-2 bg-zinc-800">
                     <Input
                       placeholder="SIMSID"
                       {...field}
@@ -167,10 +169,10 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button type="submit" disabled={submitting}>
+              <Button type="submit" variant="default" disabled={submitting}>
                 {submitting ? "Submitting..." : "Submit"}
               </Button>
-              <Button variant="destructive" onClick={onClose}>
+              <Button variant="ghost" onClick={onClose}>
                 Close
               </Button>
             </div>

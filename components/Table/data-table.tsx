@@ -101,6 +101,7 @@ export function DataTable<TData extends never[], TValue>({
     Object.keys(rowSelection).forEach((key) => {
       const index = parseInt(key, 10); // Convert key to integer
       if (!isNaN(index) && index >= 0 && index < data.length) {
+        // @ts-ignore
         newData.push(data[index].simsId);
       }
     });
@@ -109,7 +110,6 @@ export function DataTable<TData extends never[], TValue>({
 
   parseData = selectedData;
 
-  console.log(parseData);
 
   return (
     <div className="rounded-md border min-w-[700px] max-w-[900px]">

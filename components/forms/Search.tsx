@@ -7,9 +7,8 @@ import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { DataTable, parseData } from "../Table/data-table";
-import { columns, dataArr, ipColumns } from "../Table/column";
-import { useRouter } from "next/navigation";
+import { DataTable } from "../table/data-table";
+import { columns, ipColumns } from "../table/column";
 
 const UserSchema = z.object({
   simsId: z
@@ -32,49 +31,12 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
   const [error, setError] = useState<string | null>(null);
 
   const [usersSubmitting, setUsersSubmitting] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const form = useForm<z.infer<typeof UserSchema>>({
-    resolver: zodResolver(UserSchema),
-    defaultValues: {
-      simsId: "",
-    },
-  });
-
-  const router = useRouter();
+  // const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     users();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // const onSubmit = async (data: z.infer<typeof UserSchema>) => {
-  //   setSubmitting(true);
-  //   try {
-  //     const validation = UserSchema.safeParse(data);
-
-  //     if (!validation.success) {
-  //       throw new Error("Invalid input");
-  //     }
-
-  //     setStartsWith(data.simsId);
-  //     const response = await axios.post("/api/findUser", data);
-
-  //     setSearchResults(response.data);
-  //   } catch (error: any) {
-  //     console.error("Error adding user:", error);
-  //     if (
-  //       error.response &&
-  //       error.response.data &&
-  //       "error" in error.response.data
-  //     ) {
-  //       setError(error.response.data.error); // Set error message
-  //     } else {
-  //       setError("Failed to add user.");
-  //     }
-  //   } finally {
-  //     setSubmitting(false);
-  //   }
-  // };
 
   const users = async () => {
     try {
@@ -92,35 +54,33 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
     }
   };
 
-  const deleteManyUsers = async () => {
-    try {
-      setSubmitting(true);
-      const res = await axios.post("/api/deleteManyUsers", {
-        simsIds: parseData,
-      });
-      console.log(res.data);
-      return res.data;
-    } catch (error) {
-      throw new Error("Failed to delete users");
-    } finally {
-      setSubmitting(false);
-      users();
-    }
-  };
-
-  console.log(parseData);
+  // const deleteManyUsers = async () => {
+  //   try {
+  //     setSubmitting(true);
+  //     const res = await axios.post("/api/deleteManyUsers", {
+  //       simsIds: parseData,
+  //     });
+  //     console.log(res.data);
+  //     return res.data;
+  //   } catch (error) {
+  //     throw new Error("Failed to delete users");
+  //   } finally {
+  //     setSubmitting(false);
+  //     users();
+  //   }
+  // };
 
   return (
     <div className="w-screen flex justify-center items-center flex-col gap-20 z-0">
       <div className="flex flex-col gap-2">
-        <Button
+        {/* <Button
           onClick={deleteManyUsers}
           disabled={submitting}
           variant="destructive"
-          className="w-[100px]"
+          className="w-[100px] bg-destructive"
         >
           {submitting ? "Deleting" : "Delete"}
-        </Button>
+        </Button> */}
         <DataTable
           filterPlaceholder={filterPlaceholder}
           filterTarget={filterTarget}

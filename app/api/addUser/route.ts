@@ -18,8 +18,16 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    userInputSchema.safeParse(body);
-    console.log(body.region);
+    const validation = userInputSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          error: `Input data is invalid`,
+        },
+        { status: 400 }
+      );
+    }
 
     if (body.type === null || body.region === null) {
       return NextResponse.json(
@@ -31,12 +39,16 @@ export async function POST(req: Request) {
       where: {
         simsId: body.simsId,
       },
+      include: {
+        ipAddress: true,
+      },
     });
 
-    console.log(user);
     if (user && user?.ipAddressId !== null) {
       return NextResponse.json(
-        { error: "User already has an IP Address assigned" },
+        {
+          error: `User already has an IP Address assigned: ${user.ipAddress?.address} type: ${user.ipAddress?.type} region: ${user.ipAddress?.region}`,
+        },
         { status: 405 }
       );
     }
@@ -48,7 +60,6 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log({ ...ipAddress });
     if (!ipAddress) {
       return NextResponse.json(
         { error: "No free IP address available" },
@@ -61,6 +72,7 @@ export async function POST(req: Request) {
         data: {
           simsId: body.simsId,
           ipAddressId: ipAddress.id,
+          ip: ipAddress.address,
         },
       });
     }
@@ -83,15 +95,15 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        message: `Adres ${ipAddress.address} został przypisany do ${body.simsId}`,
+        message: `IP Address ${ipAddress.region} ${ipAddress.type} ${ipAddress.address} has been assigned to ${body.simsId}`,
       },
       { status: 200 }
     );
   } catch (error) {
-    throw new Error(
-      `Wystąpił błąd podczas dodawania użytkownika: ${
+    return NextResponse.json({
+      error: `Wystąpił błąd podczas dodawania użytkownika: ${
         error instanceof Error ? error.message : String(error)
-      }`
-    );
+      }`,
+    });
   }
 }

@@ -99,11 +99,9 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
       <div className="bg-zinc-800 bg-opacity-50 p-16 rounded-lg min-w-[200px] h-[500px] flex flex-wrap flex-col items-baseline justify-center">
         <h1 className="font-bold text-2xl mb-8 text-center w-full">Add User</h1>
         {error && (
-          <p className=" mb-4 text-accent-foreground text-wrap w-[250px]">
-            {error}
-          </p>
+          <p className=" mb-4 text-wrap w-[250px] text-destructive">{error}</p>
         )}
-        {success && (
+        {success && !error && (
           <p className="text-green-500 mb-4">User added successfully!</p>
         )}
         <Form {...form}>
@@ -178,7 +176,9 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
             </div>
           </form>
         </Form>
-        <div>{success && <p className="text-wrap">{successMessage}</p>}</div>
+        <div>
+          {success && !error && <p className="text-wrap">{successMessage}</p>}
+        </div>
       </div>
     </div>
   );

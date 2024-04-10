@@ -1,16 +1,16 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Checkbox } from "../ui/checkbox";
+import { Checkbox } from "./ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "./ui/dropdown-menu";
 import { parseData } from "./data-table";
 import {
   assignNextFreeIp,
@@ -18,7 +18,7 @@ import {
   deleteUser,
   releaseIp,
 } from "@/lib/actions/userActions";
-import Dialog from "../Dialog";
+import Dialog from "./Dialog";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.

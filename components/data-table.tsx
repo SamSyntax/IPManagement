@@ -27,18 +27,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 import React from "react";
-import { Input } from "../ui/input";
+import { Input } from "./ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Skeleton } from "../ui/skeleton";
+} from "./ui/select";
+import { Skeleton } from "./ui/skeleton";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

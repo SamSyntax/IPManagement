@@ -85,4 +85,3 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
 };
 
 export default Search;
-

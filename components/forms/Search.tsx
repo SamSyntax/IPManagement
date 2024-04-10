@@ -16,6 +16,8 @@ interface Props {
   filterPlaceholder: string;
 }
 
+
+
 const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
   const [searchUsers, setSearchUsers] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -35,10 +37,14 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
   }, []);
 
   const users = async () => {
-    const res = await axios.get("/api/getAllUsers");
-    setSearchUsers(res.data);
+    try {
+      const res = await axios.get("/api/getAllUsers");
+      setSearchUsers(res.data);
 
-    return res.data;
+      return res.data;
+    } catch (error) {
+      throw new Error("Failed to fetch users");
+    }
   };
 
   const toggleRotation = () => {

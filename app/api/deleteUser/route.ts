@@ -26,7 +26,7 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-    const user = await prisma.user.findFirst({
+    const user = await prisma.user.delete({
       where: {
         simsId: body.simsId,
       },
@@ -34,37 +34,24 @@ export async function POST(req: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { message: "Użytkownik nie istnieje" },
+        { message: "User does not exist" },
         { status: 404 }
       );
     }
 
-    const ipAddress = await prisma.iPAddress.findFirst({
-      where: {
-        simsId: body.simsId,
-      },
-    });
-
-
-    if (ipAddress) {
+    if (user && user.ipAddressId !== null) {
       await prisma.iPAddress.update({
         where: {
-          id: ipAddress.id,
+          id: user.ipAddressId,
         },
         data: {
           isTaken: false,
         },
       });
     }
-    // Usuń użytkownika
-    await prisma.user.delete({
-      where: {
-        simsId: body.simsId,
-      },
-    });
 
     return NextResponse.json(
-      { message: `Usunięto użytkownika ${body.simsId}` },
+      { message: `User ${body.simsId} has been deleted` },
       { status: 200 }
     );
   } catch (error) {

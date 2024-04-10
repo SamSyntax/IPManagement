@@ -43,12 +43,28 @@ export async function deleteManyUsers(simsIds: string[]) {
   }
 }
 
-export async function getAllUsers(): Promise<Vpn[]> {
+export async function getAllUsers(endpoint: string) {
   try {
-    const res = await axios.get("/api/getAllUsers");
+    const res = await axios.get(endpoint);
     return res.data;
   } catch (error) {
     throw new Error("Failed to fetch users");
   } finally {
   }
 }
+
+export async function releaseIp(simsId: string) {
+  try {
+    if (!simsId) {
+      throw new Error("simsId is required");
+    }
+
+    const response = await axios.post("/api/removeAddress", simsId);
+
+    console.log(response.data);
+  } catch (error) {
+    throw new Error("Failed to release ip");
+  }
+}
+
+

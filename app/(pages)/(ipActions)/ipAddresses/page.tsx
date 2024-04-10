@@ -1,3 +1,4 @@
+import Dialog from "@/components/Dialog";
 import Search from "@/components/forms/Search";
 
 export default async function Home({ ...props }) {

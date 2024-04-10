@@ -64,6 +64,10 @@ export async function POST(req: Request) {
         where: { simsId: body.simsId },
         data: {
           ipAddressId: freeIp.id,
+          ip: freeIp.address,
+        },
+        include: {
+          ipAddress: true,
         },
       });
 

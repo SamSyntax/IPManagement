@@ -38,7 +38,7 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
 
   const users = async () => {
     try {
-      const res = await axios.get("/api/getAllUsers");
+      const res = await axios.get(endpoint);
       setSearchUsers(res.data);
 
       return res.data;

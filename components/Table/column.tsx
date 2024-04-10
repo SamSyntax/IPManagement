@@ -4,8 +4,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
-import axios from "axios";
-import { z } from "zod";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,12 +11,19 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { useRouter } from "next/navigation";
 import { parseData } from "./data-table";
+import {
+  assignNextFreeIp,
+  deleteManyUsers,
+  deleteUser,
+  releaseIp,
+} from "@/lib/actions/userActions";
+import Dialog from "../Dialog";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Vpn = {
+  ipAddress: any;
   id: number;
   simsId: string;
   ip: string;
@@ -27,7 +32,7 @@ export type Vpn = {
   toggleRowSelection: (simsId: string) => void;
 };
 
-export const columns: ColumnDef<Vpn>[] = [
+export const userColumns: ColumnDef<Vpn>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -68,7 +73,7 @@ export const columns: ColumnDef<Vpn>[] = [
     },
   },
   {
-    accessorKey: "ip",
+    accessorKey: "ipAddress.address",
     header: ({ column }) => {
       return (
         <Button
@@ -114,12 +119,84 @@ export const columns: ColumnDef<Vpn>[] = [
   },
   {
     id: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <Button variant="ghost" onClick={() => deleteUser(row.original.simsId)}>
-        Delete
-      </Button>
-    ),
+    header: ({ table }) => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="p-0 "
+              disabled={
+                table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()
+                  ? false
+                  : true
+              }
+            >
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => deleteManyUsers(parseData)}>
+              <div className="text-wrap max-w-18 flex flex-col gap-1">
+                <span className="text-red-600">Delete users</span> <br />{" "}
+                {parseData.map((simsId: string) => (
+                  <div key={simsId} className="flex flex-col">
+                    <span>
+                      <b>{simsId}</b>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="p-0 ">
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <Dialog
+              func={() => {
+                deleteUser(row.original.simsId);
+              }}
+              ip={row.original.ip}
+              simsId={row.original.simsId}
+              title={`Delete ${row.original.simsId}`}
+            />
+
+            {row.original.simsId && (
+              <DropdownMenuItem
+                onClick={() =>
+                  assignNextFreeIp(
+                    row.original.simsId,
+                    row.original.ipAddress.type,
+                    row.original.ipAddress.region
+                  )
+                }
+              >
+                {row.original.ipAddress
+                  ? ` Assign next free address of type ${row.original.ipAddress.type}
+                in region ${row.original.ipAddress.region}`
+                  : null}
+              </DropdownMenuItem>
+            )}
+            {row.original.ip ? (
+              <DropdownMenuItem onClick={() => releaseIp(row.original.simsId)}>
+                Release IP Address {row.original.ip}
+              </DropdownMenuItem>
+            ) : null}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];
 
@@ -154,7 +231,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "desc")}
           className="flex items-center justify-start p-1"
         >
           IP Address
@@ -169,7 +246,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "desc")}
           className="flex items-center justify-start p-1"
         >
           Type
@@ -210,19 +287,27 @@ export const ipColumns: ColumnDef<Vpn>[] = [
   },
   {
     id: "actions",
-    header: ({ column }) => {
+    header: ({ table }) => {
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="p-0 ">
+            <Button
+              variant="ghost"
+              className="p-0 "
+              disabled={
+                table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()
+                  ? false
+                  : true
+              }
+            >
               <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>
-              <span className="text-wrap max-w-18">
-                Delete users <br />{" "}
+            <DropdownMenuItem onClick={() => deleteManyUsers(parseData)}>
+              <div className="text-wrap max-w-18 flex flex-col gap-1">
+                <span className="text-red-600">Delete users</span> <br />{" "}
                 {parseData.map((simsId: string) => (
                   <div key={simsId} className="flex flex-col">
                     <span>
@@ -230,8 +315,9 @@ export const ipColumns: ColumnDef<Vpn>[] = [
                     </span>
                   </div>
                 ))}
-              </span>
+              </div>
             </DropdownMenuItem>
+            <DropdownMenuItem></DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -247,7 +333,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
           <DropdownMenuContent>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem onClick={() => deleteUser(row.original.simsId)}>
-              Delete User
+              Delete User {row.original.simsId}
             </DropdownMenuItem>
             {row.original.simsId && (
               <DropdownMenuItem
@@ -272,32 +358,6 @@ export const ipColumns: ColumnDef<Vpn>[] = [
   },
 ];
 
-async function deleteUser(userId: string) {
-  try {
-    const response = await axios.post("/api/deleteUser", { simsId: userId });
-    console.log(response.data); // Log the response data
-    // Optionally, you can update the table data after successful deletion
-    // For example, refetch the data or remove the deleted row from the table
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    // Handle error
-  }
-}
 
-async function assignNextFreeIp(simsId: string, type: string, region: string) {
-  try {
-    const response = await axios.post("/api/nextFree", {
-      simsId,
-      type,
-      region,
-    });
-    console.log(response.data); // Log the response data
-    // Optionally, you can update the table data after successful assignment
-    // For example, refetch the data or update the assigned IP address in the table
-  } catch (error) {
-    console.error("Error assigning next free IP:", error);
-    // Handle error
-  }
-}
 
 

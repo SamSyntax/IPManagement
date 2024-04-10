@@ -69,6 +69,7 @@ export async function POST(req: Request) {
       },
       data: {
         ipAddressId: null,
+        ip: null,
       },
     });
 

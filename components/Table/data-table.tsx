@@ -39,7 +39,6 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Skeleton } from "../ui/skeleton";
-import { parse } from "path";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -75,6 +74,7 @@ export function DataTable<TData extends never[], TValue>({
     onColumnFiltersChange: setColumnFilters as any,
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
+
     state: {
       sorting,
       // @ts-ignore
@@ -109,7 +109,6 @@ export function DataTable<TData extends never[], TValue>({
   }, [rowSelection, data]);
 
   parseData = selectedData;
-
 
   return (
     <div className="rounded-md border min-w-[700px] max-w-[900px]">

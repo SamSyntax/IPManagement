@@ -2,20 +2,11 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { z } from "zod";
-import { Button } from "../ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
 import { DataTable } from "../table/data-table";
-import { columns, ipColumns } from "../table/column";
-
-const UserSchema = z.object({
-  simsId: z
-    .string()
-    .min(1, { message: "Enter at least one character." })
-    .max(8, { message: "SIMSID can't be longer than 8 characters." }),
-});
+import { userColumns, ipColumns } from "../table/column";
+import AddUserPopup from "./addUserForm";
+import { Button } from "../ui/button";
+import { RefreshCcwIcon } from "lucide-react";
 
 interface Props {
   endpoint: string;
@@ -25,68 +16,68 @@ interface Props {
 }
 
 const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
-  const [searchResults, setSearchResults] = useState([]);
   const [searchUsers, setSearchUsers] = useState([]);
-  const [startsWith, setStartsWith] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isRotated, setIsRotated] = useState(false);
 
-  const [usersSubmitting, setUsersSubmitting] = useState(false);
+  // Function to toggle the visibility of the popup
+  const togglePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
+
   // const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     users();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const users = async () => {
     try {
-      setSearchResults([]);
-      setUsersSubmitting(true);
-
       const res = await axios.get(endpoint);
       setSearchUsers(res.data);
 
       return res.data;
     } catch (error) {
       throw new Error("Failed to fetch users");
-    } finally {
-      setUsersSubmitting(false);
     }
   };
 
-  // const deleteManyUsers = async () => {
-  //   try {
-  //     setSubmitting(true);
-  //     const res = await axios.post("/api/deleteManyUsers", {
-  //       simsIds: parseData,
-  //     });
-  //     console.log(res.data);
-  //     return res.data;
-  //   } catch (error) {
-  //     throw new Error("Failed to delete users");
-  //   } finally {
-  //     setSubmitting(false);
-  //     users();
-  //   }
-  // };
+  const toggleRotation = () => {
+    setIsRotated(!isRotated);
+  };
 
   return (
     <div className="w-screen flex justify-center items-center flex-col gap-20 z-0">
       <div className="flex flex-col gap-2">
-        {/* <Button
-          onClick={deleteManyUsers}
-          disabled={submitting}
-          variant="destructive"
-          className="w-[100px] bg-destructive"
-        >
-          {submitting ? "Deleting" : "Delete"}
-        </Button> */}
+        <div className="flex  gap-2">
+          {isPopupOpen && (
+            <AddUserPopup onClose={togglePopup} onCreation={users} />
+          )}
+          <div className="flex-1">
+            <Button variant="outline" onClick={togglePopup}>
+              + Add User
+            </Button>
+          </div>
+          <div className="flex flex-1 items-center justify-end w-full ">
+            <RefreshCcwIcon
+              className={`transform transition-transform cursor-pointer  ease-out duration-500 ${
+                !isRotated ? "rotate-[360deg]" : ""
+              }`}
+              onClick={() => {
+                users();
+                toggleRotation();
+              }}
+            />
+          </div>
+        </div>
         <DataTable
           filterPlaceholder={filterPlaceholder}
           filterTarget={filterTarget}
           data={searchUsers}
           // @ts-ignore
-          columns={cols === "ip" ? ipColumns : columns}
+          columns={cols === "ip" ? ipColumns : userColumns}
         />
       </div>
     </div>
@@ -94,3 +85,4 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
 };
 
 export default Search;
+

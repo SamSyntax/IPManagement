@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     if (user && user?.ipAddressId !== null) {
       return NextResponse.json(
         {
-          error: `User already has an IP Address assigned: ${user.ipAddress?.address} type: ${user.ipAddress?.type} region: ${user.ipAddress?.region}`,
+          error: `User ${user.simsId} already has an IP Address assigned: ${user.ipAddress?.address} type: ${user.ipAddress?.type} region: ${user.ipAddress?.region}`,
         },
         { status: 405 }
       );

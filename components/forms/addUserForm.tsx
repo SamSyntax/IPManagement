@@ -14,7 +14,6 @@ import {
   FormItem,
   FormMessage,
 } from "../ui/form";
-import { useRouter } from "next/navigation";
 
 // Define the type of the response data object
 type UserDataResponse = {
@@ -36,9 +35,13 @@ const userInputSchema = z.object({
 
 interface AddUserPopupProps {
   onClose: () => void; // Function to close the popup
+  onCreation: (endpoint: string) => void;
 }
 
-export default function AddUserPopup({ onClose }: AddUserPopupProps) {
+export default function AddUserPopup({
+  onClose,
+  onCreation,
+}: AddUserPopupProps) {
   const form = useForm<z.infer<typeof userInputSchema>>({
     resolver: zodResolver(userInputSchema),
     defaultValues: {
@@ -47,8 +50,6 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
       type: "P4",
     },
   });
-
-  const router = useRouter();
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,10 +65,7 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
         throw new Error("Invalid input");
       }
 
-      const response = await axios.post<UserDataResponse>(
-        "http://localhost:3000/api/addUser",
-        data
-      );
+      const response = await axios.post<UserDataResponse>("/api/addUser", data);
 
       const res = response.data.message;
 
@@ -86,8 +84,8 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
         setError("Failed to add user.");
       }
     } finally {
+      onCreation("api/getAllUsers");
       setSubmitting(false);
-      router.refresh();
     }
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,15 +93,13 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
   };
 
   return (
-    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-50 backdrop-blur-md z-10">
-      <div className="bg-zinc-800 bg-opacity-50 p-16 rounded-lg min-w-[200px] h-[500px] flex flex-wrap flex-col items-baseline justify-center">
+    <div className="absolute bg-black/80 top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-50  z-10">
+      <div className="bg-zinc-800 bg-opacity-70 p-16 rounded-lg min-w-[500px] h-[500px] flex flex-col items-center justify-center">
         <h1 className="font-bold text-2xl mb-8 text-center w-full">Add User</h1>
         {error && (
-          <p className=" mb-4 text-accent-foreground text-wrap w-[250px]">
-            {error}
-          </p>
+          <p className=" mb-4 text-wrap w-[250px] text-red-600">{error}</p>
         )}
-        {success && (
+        {success && !error && (
           <p className="text-green-500 mb-4">User added successfully!</p>
         )}
         <Form {...form}>
@@ -178,7 +174,11 @@ export default function AddUserPopup({ onClose }: AddUserPopupProps) {
             </div>
           </form>
         </Form>
-        <div>{success && <p className="text-wrap">{successMessage}</p>}</div>
+        <div className="">
+          {success && !error && (
+            <p className="text-wrap w-full">{successMessage}</p>
+          )}
+        </div>
       </div>
     </div>
   );

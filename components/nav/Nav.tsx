@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Links } from "@/lib/utils";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import AddUserPopup from "../forms/addUserForm";
 import { Button } from "../ui/button";
 import Image from "next/image";
@@ -13,16 +13,21 @@ import { useTheme } from "next-themes";
 
 const Nav = () => {
   const { theme } = useTheme();
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  // Function to toggle the visibility of the popup
-  const togglePopup = () => {
-    setIsPopupOpen(!isPopupOpen);
-  };
   const path = usePathname();
+
   return (
     <nav className="flex p-8 justify-between">
       <div className="flex items-center justify-start gap-4  text-xs">
+        <div className="flex items-center justify-center">
+          <Link href="/">
+            {theme === "dark" || theme === "system" ? (
+              <Image src={LogoLight} alt="Logo" width={150} height={150} />
+            ) : (
+              <Image src={Logo} alt="Logo" width={150} height={150} />
+            )}
+          </Link>
+        </div>
         {Links.map((link) => (
           <Link
             className={
@@ -37,21 +42,9 @@ const Nav = () => {
           </Link>
         ))}
       </div>
-      <div className="flex items-center justify-center">
-        <Link href="/">
-          {theme === "dark" || theme === "system" ? (
-            <Image src={LogoLight} alt="Logo" width={150} height={150} />
-          ) : (
-            <Image src={Logo} alt="Logo" width={150} height={150} />
-          )}
-        </Link>
-      </div>
+
       <div className="flex gap-2">
         <ModeToggle />
-        <Button variant="outline" onClick={togglePopup}>
-          Add User
-        </Button>
-        {isPopupOpen && <AddUserPopup onClose={togglePopup} />}
       </div>
     </nav>
   );

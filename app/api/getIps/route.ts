@@ -3,12 +3,26 @@ import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function GET() {
-  try {
-    const ips = await prisma.iPAddress.findMany({});
 
+export async function GET(req: Request, res: Response) {
+  try {
+    // Fetch users with their associated IP addresses
+    const ips = await prisma.iPAddress.findMany({});
+    res.ok;
+
+    // Return the users with a success status
     return NextResponse.json(ips, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 });
+    // If an error occurs, handle it gracefully
+    console.error("Error occurred while fetching users:", error);
+
+    // Return an error response with a 500 status
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  } finally {
+    // Ensure to disconnect the Prisma client after the operation
+    await prisma.$disconnect();
   }
 }

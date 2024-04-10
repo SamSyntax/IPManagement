@@ -7,7 +7,6 @@ import { userColumns, ipColumns } from "@/components/column";
 import AddUserPopup from "./addUserForm";
 import { Button } from "@/components/ui/button";
 import { RefreshCcwIcon } from "lucide-react";
-import { getAllUsers } from "@/lib/actions/userActions";
 
 interface Props {
   endpoint: string;
@@ -15,8 +14,6 @@ interface Props {
   filterTarget: string;
   filterPlaceholder: string;
 }
-
-
 
 const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
   const [searchUsers, setSearchUsers] = useState([]);

@@ -1,7 +1,5 @@
 import Search from "@/components/forms/Search";
 
-
-
 const Home: React.FC = (props) => {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -9,7 +7,7 @@ const Home: React.FC = (props) => {
         <Search
           filterTarget="simsId"
           filterPlaceholder="Search for SIMSID..."
-          endpoint="/api/getAllUsers"
+          endpoint="/api/addUser"
         />
       </div>
     </main>

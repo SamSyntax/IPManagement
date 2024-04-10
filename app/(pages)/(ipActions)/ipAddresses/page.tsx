@@ -1,7 +1,6 @@
-import Dialog from "@/components/Dialog";
 import Search from "@/components/forms/Search";
 
-export default async function Home({ ...props }) {
+const Home: React.FC = (props) => {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="flex flex-wrap items-center justify-center">
@@ -14,4 +13,6 @@ export default async function Home({ ...props }) {
       </div>
     </main>
   );
-}
+};
+
+export default Home;

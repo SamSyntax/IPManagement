@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { DataTable } from "../table/data-table";
-import { userColumns, ipColumns } from "../table/column";
+import { DataTable } from "@/components/table/data-table";
+import { userColumns, ipColumns } from "@/components/table/column";
 import AddUserPopup from "./addUserForm";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { RefreshCcwIcon } from "lucide-react";
 
 interface Props {
@@ -85,4 +85,3 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
 };
 
 export default Search;
-

@@ -357,7 +357,3 @@ export const ipColumns: ColumnDef<Vpn>[] = [
     enableColumnFilter: false,
   },
 ];
-
-
-
-

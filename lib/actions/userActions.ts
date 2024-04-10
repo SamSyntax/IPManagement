@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Vpn } from "@/components/table/column";
+import { Vpn } from "@/components/column";
 
 export async function deleteUser(userId: string) {
   try {

@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { DataTable } from "@/components/table/data-table";
-import { userColumns, ipColumns } from "@/components/table/column";
+import { DataTable } from "@/components/data-table";
+import { userColumns, ipColumns } from "@/components/column";
 import AddUserPopup from "./addUserForm";
 import { Button } from "@/components/ui/button";
 import { RefreshCcwIcon } from "lucide-react";

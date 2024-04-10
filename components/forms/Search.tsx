@@ -7,6 +7,7 @@ import { userColumns, ipColumns } from "@/components/column";
 import AddUserPopup from "./addUserForm";
 import { Button } from "@/components/ui/button";
 import { RefreshCcwIcon } from "lucide-react";
+import { getAllUsers } from "@/lib/actions/userActions";
 
 interface Props {
   endpoint: string;
@@ -25,7 +26,7 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
     setIsPopupOpen(!isPopupOpen);
   };
 
-  // const [submitting, setSubmitting] = useState(false);
+  // // const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     users();
@@ -34,14 +35,10 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
   }, []);
 
   const users = async () => {
-    try {
-      const res = await axios.get(endpoint);
-      setSearchUsers(res.data);
+    const res = await axios.get("/api/getAllUsers");
+    setSearchUsers(res.data);
 
-      return res.data;
-    } catch (error) {
-      throw new Error("Failed to fetch users");
-    }
+    return res.data;
   };
 
   const toggleRotation = () => {

@@ -23,6 +23,7 @@ import Dialog from "./Dialog";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Vpn = {
+  address: string | undefined;
   ipAddress: any;
   id: number;
   simsId: string;
@@ -41,16 +42,18 @@ export const userColumns: ColumnDef<Vpn>[] = [
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        onCheckedChange={(value: any) =>
-          table.toggleAllPageRowsSelected(!!value)
-        }
+        onCheckedChange={(value: any) => {
+          table.toggleAllPageRowsSelected(!!value);
+        }}
         aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value: any) => row.toggleSelected(!!value)}
+        onCheckedChange={(value: any) => {
+          row.toggleSelected(!!value);
+        }}
         aria-label="Select row"
       />
     ),
@@ -137,18 +140,14 @@ export const userColumns: ColumnDef<Vpn>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => deleteManyUsers(parseData)}>
-              <div className="text-wrap max-w-18 flex flex-col gap-1">
-                <span className="text-red-600">Delete users</span> <br />{" "}
-                {parseData.map((simsId: string) => (
-                  <div key={simsId} className="flex flex-col">
-                    <span>
-                      <b>{simsId}</b>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </DropdownMenuItem>
+            <Dialog
+              func={() => {
+                deleteManyUsers(parseData.map((item: any) => item.simsId));
+              }}
+              title={parseData.length > 1 ? "Delete users" : "Delete user"}
+              bulk={true}
+              type="users"
+            />
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -167,9 +166,11 @@ export const userColumns: ColumnDef<Vpn>[] = [
               func={() => {
                 deleteUser(row.original.simsId);
               }}
+              type="users"
               ip={row.original.ip}
               simsId={row.original.simsId}
               title={`Delete ${row.original.simsId}`}
+              bulk={false}
             />
 
             {row.original.simsId && (
@@ -305,19 +306,14 @@ export const ipColumns: ColumnDef<Vpn>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => deleteManyUsers(parseData)}>
-              <div className="text-wrap max-w-18 flex flex-col gap-1">
-                <span className="text-red-600">Delete users</span> <br />{" "}
-                {parseData.map((simsId: string) => (
-                  <div key={simsId} className="flex flex-col">
-                    <span>
-                      <b>{simsId}</b>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem></DropdownMenuItem>
+            <Dialog
+              func={() => {
+                deleteManyUsers(parseData.map((item: any) => item.simsId));
+              }}
+              title={parseData.length > 1 ? "Delete users" : "Delete user"}
+              bulk={true}
+              type="ips"
+            />
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -332,22 +328,30 @@ export const ipColumns: ColumnDef<Vpn>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => deleteUser(row.original.simsId)}>
-              Delete User {row.original.simsId}
-            </DropdownMenuItem>
+
             {row.original.simsId && (
-              <DropdownMenuItem
-                onClick={() =>
-                  assignNextFreeIp(
-                    row.original.simsId,
-                    row.original.type,
-                    row.original.region
-                  )
-                }
-              >
-                Assign next free address of type {row.original.type} in region{" "}
-                {row.original.region}
-              </DropdownMenuItem>
+              <div>
+                <Dialog
+                  type="ips"
+                  bulk={false}
+                  ip={row.original.address}
+                  title={`Delete ${row.original.simsId}`}
+                  simsId={row.original.simsId}
+                  func={() => deleteUser(row.original.simsId)}
+                />
+                <DropdownMenuItem
+                  onClick={() =>
+                    assignNextFreeIp(
+                      row.original.simsId,
+                      row.original.type,
+                      row.original.region
+                    )
+                  }
+                >
+                  Assign next free address of type {row.original.type} in region{" "}
+                  {row.original.region}
+                </DropdownMenuItem>
+              </div>
             )}
           </DropdownMenuContent>
         </DropdownMenu>

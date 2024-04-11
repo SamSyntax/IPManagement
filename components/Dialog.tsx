@@ -10,15 +10,33 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
+import { parseData } from "./data-table";
 
 interface Props {
-  simsId: string;
-  ip: string;
+  simsId?: string;
+  ip?: string;
   title: string;
+  bulk: boolean;
+  type: "users" | "ips";
   func: () => void;
 }
 
-const Dialog = ({ simsId, ip, func, title }: Props) => {
+const Dialog = ({ simsId, ip, func, title, bulk, type }: Props) => {
+  const simsIds: string[] = [];
+  const ips: string[] = [];
+
+  if (type === "ips") {
+    parseData.map((item: any) => {
+      simsIds.push(item.simsId);
+      ips.push(item.address);
+    });
+  } else {
+    parseData.map((item: any) => {
+      simsIds.push(item.simsId);
+      ips.push(item.ip);
+    });
+  }
+
   return (
     <div>
       <AlertDialog>
@@ -29,9 +47,10 @@ const Dialog = ({ simsId, ip, func, title }: Props) => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete user:{" "}
-              <b>{simsId}</b> from our VPN database and release IP Address:{" "}
-              <b>{ip}</b>.
+              This action cannot be undone. This will permanently delete
+              user(s): <b>{bulk ? simsIds.join(", ") : simsId}</b> from our VPN
+              database and release IP Address:{" "}
+              <b>{bulk ? ips.join(", ") : ip}</b>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

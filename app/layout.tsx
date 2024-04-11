@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/nav/Nav";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,10 +14,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  session,
 }: Readonly<{
   children: React.ReactNode;
-  session: never;
 }>) {
   return (
     <html lang="en">
@@ -24,6 +23,7 @@ export default function RootLayout({
         <body className={inter.className}>
           <Nav />
           <main className="overflow-x-hidden">{children}</main>
+          <Toaster />
         </body>
       </ThemeProvider>
     </html>

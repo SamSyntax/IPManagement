@@ -89,7 +89,6 @@ export async function GET(req: Request, res: Response) {
     // Fetch users with their associated IP addresses
     const ips = await prisma.iPAddress.findMany({});
     res.ok;
-    req.json();
 
     // Return the users with a success status
     return NextResponse.json(ips, { status: 200 });

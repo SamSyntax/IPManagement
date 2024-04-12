@@ -39,10 +39,7 @@ type UserDataResponse = {
 const userInputSchema = z.object({
   simsId: z
     .string()
-    .regex(
-      new RegExp("^[a-zA-Z]+.[a-zA-Z]^"),
-      "No special characters are allowed"
-    )
+    .regex(/^[a-zA-Z0-9]+$/, "No special characters are allowed")
     .length(8, { message: "SIMSID must be exactly 8 characters long." }),
   type: z.enum(["P4", "P6"]),
   region: z.enum(["EMEA", "APAC", "AMERICAS"]),

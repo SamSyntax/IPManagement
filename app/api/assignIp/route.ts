@@ -84,7 +84,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(res: Response) {
+export async function GET(req: Request, res: Response) {
   try {
     // Fetch users with their associated IP addresses
     const ips = await prisma.iPAddress.findMany({});

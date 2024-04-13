@@ -198,6 +198,9 @@ export const userColumns: ColumnDef<Vpn>[] = [
         </DropdownMenu>
       );
     },
+    enableColumnFilter: false,
+    enableSorting: false,
+    enableHiding: false,
   },
 ];
 
@@ -258,6 +261,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
   },
   {
     accessorKey: "region",
+
     header: ({ column }) => {
       return (
         <Button
@@ -359,5 +363,6 @@ export const ipColumns: ColumnDef<Vpn>[] = [
     },
     enableSorting: false,
     enableColumnFilter: false,
+    enableHiding: false,
   },
 ];

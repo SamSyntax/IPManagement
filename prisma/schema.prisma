@@ -14,21 +14,31 @@ datasource db {
 }
 
 model User {
-  id         Int        @id @default(autoincrement())
-  simsId     String     @unique 
-  ipAddress  IPAddress? 
-  ip         String?     
-  ipAddressId Int?     @unique 
+  id          Int        @id @default(autoincrement())
+  simsId      String     @unique
+  ipAddress   IPAddress?
+  ip          String?
+  ipAddressId Int?       @unique
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model IPAddress {
   id      Int     @id @default(autoincrement())
-  address String  @unique 
+  address String  @unique
   type    Type    @default(P4)
   region  Region  @default(EMEA)
   isTaken Boolean @default(false)
   user    User?   @relation(fields: [simsId], references: [simsId], onDelete: SetNull)
   simsId  String? @unique
+}
+
+model Admin {
+  id      Int    @id @default(autoincrement())
+  name    String
+  surname String
+  simsId  String @unique
+  role    Role   @default(AGENT)
 }
 
 enum Type {
@@ -40,4 +50,9 @@ enum Region {
   EMEA
   APAC
   AMERICAS
+}
+
+enum Role {
+  ADMIN
+  AGENT
 }

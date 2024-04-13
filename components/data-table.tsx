@@ -9,6 +9,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
+  VisibilityState,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -38,6 +39,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "./ui/skeleton";
 
 interface DataTableProps<TData, TValue> {
@@ -64,6 +71,7 @@ export function DataTable<TData extends never[], TValue>({
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
     {}
   );
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const table = useReactTable({
     data,
     columns,
@@ -74,11 +82,13 @@ export function DataTable<TData extends never[], TValue>({
     onColumnFiltersChange: setColumnFilters as any,
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
+    onColumnVisibilityChange: setColumnVisibility,
 
     state: {
       sorting,
       // @ts-ignore
       columnFilters,
+      columnVisibility,
       rowSelection,
     },
   });
@@ -109,7 +119,6 @@ export function DataTable<TData extends never[], TValue>({
   }, [rowSelection, data]);
 
   parseData = selectedData;
-
 
   return (
     <div className="rounded-md border min-w-[700px] max-w-[900px]">
@@ -159,6 +168,32 @@ export function DataTable<TData extends never[], TValue>({
               className="max-w-sm"
             />
           </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className=" uppercase"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id.substring(column.id.indexOf("_") + 1)}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
             Page {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount()}

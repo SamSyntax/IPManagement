@@ -33,13 +33,13 @@ model IPAddress {
   simsId  String? @unique
 }
 
-model Admin {
-  id      Int    @id @default(autoincrement())
-  name    String
-  surname String
-  simsId  String @unique
-  role    Role   @default(AGENT)
-}
+// model Admin {
+//   id      Int    @id @default(autoincrement())
+//   name    String
+//   surname String
+//   simsId  String @unique
+//   role    Role   @default(AGENT)
+// }
 
 enum Type {
   P4
@@ -52,7 +52,7 @@ enum Region {
   AMERICAS
 }
 
-enum Role {
-  ADMIN
-  AGENT
-}
+// enum Role {
+//   ADMIN
+//   AGENT
+// }

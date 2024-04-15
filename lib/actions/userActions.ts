@@ -1,10 +1,9 @@
 import axios from "axios";
-import { Vpn } from "@/components/column";
 
 export async function deleteUser(userId: string) {
   try {
     const response = await axios.post("/api/deleteUser", { simsId: userId });
-    console.log(response.data); // Log the response data
+    console.log("action: ", response.data, response.status); // Log the response data
     // Optionally, you can update the table data after successful deletion
     // For example, refetch the data or remove the deleted row from the table
   } catch (error) {
@@ -37,7 +36,8 @@ export async function deleteManyUsers(simsIds: string[]) {
   try {
     const response = await axios.post("/api/deleteManyUsers", { simsIds });
 
-    console.log(response.data); // Log the response data
+    console.log("action: ", response.status);
+    return { ...response };
   } catch (error) {
     console.error("Error deleting users:", error);
   }
@@ -59,12 +59,10 @@ export async function releaseIp(simsId: string) {
       throw new Error("simsId is required");
     }
 
-    const response = await axios.post("/api/removeAddress", simsId);
+    const response = await axios.post("/api/removeAddress", { simsId: simsId });
 
     console.log(response.data);
   } catch (error) {
     throw new Error("Failed to release ip");
   }
 }
-
-

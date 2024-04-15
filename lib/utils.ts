@@ -8,6 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export const Links = [
   { label: "Users", href: "/" },
   { label: "Addresses", href: "/ipAddresses" },
+  { label: "Add addresses", href: "/uploadExcel" },
 ];
 
 export async function parseExcelData(filePath: string): Promise<any[]> {

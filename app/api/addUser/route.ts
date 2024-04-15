@@ -20,6 +20,8 @@ export async function POST(req: Request) {
 
     const validation = userInputSchema.safeParse(body);
 
+    let isExisting: boolean = false;
+
     if (!validation.success) {
       return NextResponse.json(
         {
@@ -44,6 +46,26 @@ export async function POST(req: Request) {
       },
     });
 
+    const ipAddress = await prisma.iPAddress.findFirst({
+      where: {
+        region: body.region,
+        type: body.type,
+        isTaken: false,
+      },
+    });
+    if (user && user.ip === null) {
+      await prisma.user.update({
+        where: {
+          simsId: body.simsId,
+        },
+        data: {
+          ipAddressId: ipAddress?.id,
+          ip: ipAddress?.address,
+        },
+      });
+      isExisting = true;
+    }
+
     if (user && user?.ipAddressId !== null) {
       return NextResponse.json(
         {
@@ -52,13 +74,6 @@ export async function POST(req: Request) {
         { status: 405 }
       );
     }
-    const ipAddress = await prisma.iPAddress.findFirst({
-      where: {
-        region: body.region,
-        type: body.type,
-        isTaken: false,
-      },
-    });
 
     if (!ipAddress) {
       return NextResponse.json(
@@ -95,16 +110,21 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        message: `IP Address ${ipAddress.region} ${ipAddress.type} ${ipAddress.address} has been assigned to ${body.simsId}`,
+        message: isExisting
+          ? `IP Address ${ipAddress.address} has been assigned to ${body.simsId}`
+          : `IP Address ${ipAddress.region} ${ipAddress.type} ${ipAddress.address} has been assigned to ${body.simsId}`,
       },
-      { status: 200 }
+      { status: isExisting ? 201 : 200 }
     );
   } catch (error) {
-    return NextResponse.json({
-      error: `Wystąpił błąd podczas dodawania użytkownika: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-    });
+    return NextResponse.json(
+      {
+        error: `There was an error adding a user: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      },
+      { status: 500 }
+    );
   }
 }
 

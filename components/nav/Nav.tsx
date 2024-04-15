@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Links, parseExcelData } from "@/lib/utils";
+import { Links } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -8,7 +8,6 @@ import Logo from "@/public/images/schenker_logo.svg";
 import LogoLight from "@/public/images/schenker_logo_light.svg";
 import { ModeToggle } from "./theme-toggle";
 import { useTheme } from "next-themes";
-import { Button } from "../ui/button";
 
 const Nav = () => {
   const { theme } = useTheme();

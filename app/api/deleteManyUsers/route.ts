@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       });
 
       if (!user) {
-        console.log(`User with SIMS ID ${simsId} not found`);
+        NextResponse.json(`User with SIMS ID ${simsId} not found`);
         continue; // Continue to the next iteration of the loop
       }
 

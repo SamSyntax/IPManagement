@@ -11,6 +11,13 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import { parseData } from "./data-table";
+import { useRouter } from "next/navigation";
+import {
+  deleteManyUsers,
+  deleteUser,
+  releaseIp,
+} from "@/lib/actions/userActions";
+import { toast } from "./ui/use-toast";
 
 interface Props {
   simsId?: string;
@@ -18,13 +25,14 @@ interface Props {
   title: string;
   bulk: boolean;
   type: "users" | "ips";
-  func: () => void;
+  action: "delete" | "release";
+  func: (simsIds?: string[], simsId?: string) => void;
 }
 
-const Dialog = ({ simsId, ip, func, title, bulk, type }: Props) => {
+const Dialog = ({ simsId, ip, title, func, bulk, type, action }: Props) => {
   const simsIds: string[] = [];
   const ips: string[] = [];
-
+  const router = useRouter();
   if (type === "ips") {
     parseData.map((item: any) => {
       simsIds.push(item.simsId);
@@ -37,6 +45,56 @@ const Dialog = ({ simsId, ip, func, title, bulk, type }: Props) => {
     });
   }
 
+  if (!bulk) {
+    simsIds.push(simsId!);
+  }
+
+  const handleDeleteManyUsers = async () => {
+    try {
+      const response = await deleteManyUsers(simsIds);
+      toast({
+        title: "Users have been deleted",
+        description:
+          simsIds.length > 1 && bulk
+            ? `Users ${simsIds.join(", ")} have been deleted`
+            : `User ${simsId} has been deleted`,
+      });
+      if (response?.status !== 200) {
+        throw new Error();
+      }
+    } catch (error) {
+      console.error("Error deleting users", error);
+      toast({
+        title: "Ughh, something went wrong!",
+        description:
+          simsIds.length > 1 && bulk
+            ? `We couldn't delete users: ${simsIds.join(", ")}`
+            : `We couldn't delete user: ${simsId}`,
+        variant: "destructive",
+      });
+    } finally {
+      router.push("/");
+    }
+  };
+
+  const handleRelease = async () => {
+    try {
+      const response = await releaseIp(simsId!);
+      toast({
+        title: "IP Address has been released",
+        description: `IP Address ${ip} has been released`,
+      });
+    } catch (error) {
+      console.error("Error releasing IP Address", error);
+      toast({
+        title: "Ughh, something went wrong!",
+        description: `We couldn't release IP Address: ${ip} `,
+      });
+    } finally {
+      router.push("/");
+    }
+  };
+
   return (
     <div>
       <AlertDialog>
@@ -46,16 +104,29 @@ const Dialog = ({ simsId, ip, func, title, bulk, type }: Props) => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete
-              user(s): <b>{bulk ? simsIds.join(", ") : simsId}</b> from our VPN
-              database and release IP Address:{" "}
-              <b>{bulk ? ips.join(", ") : ip}</b>.
-            </AlertDialogDescription>
+            {action === "delete" ? (
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete
+                user(s): <b>{bulk ? simsIds.join(", ") : simsId}</b> from our
+                VPN database and release IP Address:{" "}
+                <b>{bulk ? ips.join(", ") : ip}</b>.
+              </AlertDialogDescription>
+            ) : (
+              <AlertDialogDescription>
+                This action cannot be undone. This will release IP Address:{" "}
+                <b>{ip}</b>
+              </AlertDialogDescription>
+            )}
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={func}>Continue</AlertDialogAction>
+            <AlertDialogAction
+              onClick={
+                action === "delete" ? handleDeleteManyUsers : handleRelease
+              }
+            >
+              Continue
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

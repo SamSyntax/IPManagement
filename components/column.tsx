@@ -19,6 +19,7 @@ import {
   releaseIp,
 } from "@/lib/actions/userActions";
 import Dialog from "./Dialog";
+import { deleteIp } from "@/lib/actions/ipActions";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -120,6 +121,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
       );
     },
   },
+
   {
     id: "actions",
     header: ({ table }) => {
@@ -147,6 +149,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
               title={parseData.length > 1 ? "Delete users" : "Delete user"}
               bulk={true}
               type="users"
+              action="delete"
             />
           </DropdownMenuContent>
         </DropdownMenu>
@@ -171,6 +174,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
               simsId={row.original.simsId}
               title={`Delete ${row.original.simsId}`}
               bulk={false}
+              action="delete"
             />
 
             {row.original.simsId && (
@@ -190,9 +194,15 @@ export const userColumns: ColumnDef<Vpn>[] = [
               </DropdownMenuItem>
             )}
             {row.original.ip ? (
-              <DropdownMenuItem onClick={() => releaseIp(row.original.simsId)}>
-                Release IP Address {row.original.ip}
-              </DropdownMenuItem>
+              <Dialog
+                type="ips"
+                bulk={false}
+                ip={row.original.ip}
+                title={`Release ${row.original.ip}`}
+                simsId={row.original.simsId}
+                func={() => releaseIp(row.original.address!)}
+                action="release"
+              />
             ) : null}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -235,7 +245,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "desc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex items-center justify-start p-1"
         >
           IP Address
@@ -243,6 +253,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
         </Button>
       );
     },
+    enableResizing: true,
   },
   {
     accessorKey: "type",
@@ -250,7 +261,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "desc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex items-center justify-start p-1"
         >
           Type
@@ -258,6 +269,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
         </Button>
       );
     },
+    enableSorting: true,
   },
   {
     accessorKey: "region",
@@ -274,6 +286,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
         </Button>
       );
     },
+    enableSorting: true,
   },
   {
     accessorKey: "simsId",
@@ -289,6 +302,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
         </Button>
       );
     },
+    sortingFn: "text",
   },
   {
     id: "actions",
@@ -317,6 +331,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
               title={parseData.length > 1 ? "Delete users" : "Delete user"}
               bulk={true}
               type="ips"
+              action="delete"
             />
           </DropdownMenuContent>
         </DropdownMenu>
@@ -341,6 +356,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
                   ip={row.original.address}
                   title={`Delete ${row.original.simsId}`}
                   simsId={row.original.simsId}
+                  action="delete"
                   func={() => deleteUser(row.original.simsId)}
                 />
                 <DropdownMenuItem
@@ -355,6 +371,15 @@ export const ipColumns: ColumnDef<Vpn>[] = [
                   Assign next free address of type {row.original.type} in region{" "}
                   {row.original.region}
                 </DropdownMenuItem>
+                <Dialog
+                  type="ips"
+                  bulk={false}
+                  ip={row.original.address}
+                  title={`Delete ${row.original.simsId}`}
+                  simsId={row.original.simsId}
+                  action="delete"
+                  func={() => deleteIp(row.original.address!)}
+                />
               </div>
             )}
           </DropdownMenuContent>
@@ -363,6 +388,5 @@ export const ipColumns: ColumnDef<Vpn>[] = [
     },
     enableSorting: false,
     enableColumnFilter: false,
-    enableHiding: false,
   },
 ];

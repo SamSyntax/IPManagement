@@ -80,10 +80,19 @@ const AddSheet = ({
 
       setSuccessMessage(res.toString());
       setSuccess(true);
-      toast({
-        title: "User added!",
-        description: `${data.simsId} has been added to the VPN database`,
-      });
+
+      if (response.status === 201) {
+        toast({
+          title: "Address assigned!",
+          description: `${response.data.message}`,
+        });
+      } else {
+        toast({
+          title: "User added!",
+          description: `${response.data.message}`,
+        });
+      }
+      
       setError(null);
     } catch (error: any) {
       console.error("Error adding user:", error);
@@ -94,7 +103,7 @@ const AddSheet = ({
       ) {
         setError(error.response.data.error); // Set error message
         toast({
-          title: "Ughh something went wrong!",
+          title: "Ughh, something went wrong!",
           description: `${error.response.data.error}`,
           variant: "destructive",
           action: <ToastAction altText="Try again">Close</ToastAction>,

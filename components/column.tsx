@@ -20,6 +20,7 @@ import {
 } from "@/lib/actions/userActions";
 import Dialog from "./Dialog";
 import { deleteIp } from "@/lib/actions/ipActions";
+import axios from "axios";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -390,3 +391,4 @@ export const ipColumns: ColumnDef<Vpn>[] = [
     enableColumnFilter: false,
   },
 ];
+

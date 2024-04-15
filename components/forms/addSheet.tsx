@@ -25,6 +25,7 @@ import {
 import React from "react";
 import { useToast } from "../ui/use-toast";
 import { ToastAction } from "../ui/toast";
+import MessageCopy from "../MessageCopy";
 
 // Define the type of the response data object
 type UserDataResponse = {
@@ -64,9 +65,12 @@ const AddSheet = ({
   const [success, setSuccess] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { toast } = useToast();
+  const [userData, setUserData] = useState<any>(null);
 
   const onSubmit = async (data: z.infer<typeof userInputSchema>) => {
     setSubmitting(true);
+    setSuccess(false);
+    setUserData(null);
     try {
       const validation = userInputSchema.safeParse(data);
 
@@ -92,8 +96,9 @@ const AddSheet = ({
           description: `${response.data.message}`,
         });
       }
-      
+
       setError(null);
+      setUserData(data);
     } catch (error: any) {
       console.error("Error adding user:", error);
       if (
@@ -121,7 +126,6 @@ const AddSheet = ({
       onCreation("api/getAllUsers");
 
       setSubmitting(false);
-      setSuccess(false);
     }
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -230,17 +234,25 @@ const AddSheet = ({
 
             <div className="flex flex-col gap-4 pt-2">
               {error && (
-                <p className=" mb-4 text-wrap w-[250px] text-red-600">
-                  {error}
-                </p>
+                <MessageCopy
+                  content={successMessage!}
+                  description="Paste to the work notes"
+                />
               )}
               {success && !error && (
                 <p className="text-green-500 mb-4">User added successfully!</p>
               )}
               <div className="">
                 {success && !error && (
-                  <div>
-                    <p className="text-wrap w-full">{successMessage}</p>
+                  <div className="flex flex-col gap-4">
+                    <MessageCopy
+                      content={successMessage!}
+                      description="Paste to the work notes"
+                    />
+                    <MessageCopy
+                      content={`User ${userData.simsId}`}
+                      description="Paste to the resolution notes"
+                    />
                   </div>
                 )}
               </div>

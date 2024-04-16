@@ -12,38 +12,42 @@ const bodySchema = z.object({
 
 export async function POST(req: Request, res: NextResponse) {
   try {
-    // Parse the request body
     const data = await req.json();
-    const existingAddresses: string[] = [];
-    const addedAddresses: string[] = [];
+    const validationResults = data.map((entry: any) =>
+      bodySchema.safeParse(entry)
+    );
 
-    // Ensure that data is an array
+    const invalidEntries = validationResults.filter(
+      (result: any) => !result.success
+    );
+    if (invalidEntries.length > 0) {
+      return NextResponse.json(
+        {
+          message: "Input is invalid",
+          errors: invalidEntries.map((result: any) => result.error),
+        },
+        { status: 400 }
+      );
+    }
 
-    // Validate and process each entry in the data array
-    for (const entry of data) {
-      const validation = bodySchema.safeParse(entry);
-      if (!validation.success) {
-        return NextResponse.json(
-          { message: "Input is invalid" },
-          { status: 400 }
-        );
-      }
+    const existingAddresses = await prisma.iPAddress.findMany({
+      where: { address: { in: data.map((entry: any) => entry.address) } },
+      select: { address: true },
+    });
 
-      const existingAddress = await prisma.iPAddress.findUnique({
-        where: { address: entry.address },
+    const existingAddressMap = new Set(
+      existingAddresses.map((address) => address.address)
+    );
+    const addedAddresses = [];
+
+    const newAddresses = data.filter(
+      (entry: any) => !existingAddressMap.has(entry.address)
+    );
+    if (newAddresses.length > 0) {
+      await prisma.iPAddress.createMany({
+        data: newAddresses,
       });
-
-      if (existingAddress) {
-        existingAddresses.push(entry.address);
-        continue;
-      }
-
-      if (!existingAddress) {
-        addedAddresses.push(entry.address);
-        await prisma.iPAddress.create({
-          data: entry,
-        });
-      }
+      addedAddresses.push(...newAddresses.map((entry: any) => entry.address));
     }
 
     if (addedAddresses.length === 0) {
@@ -58,13 +62,11 @@ export async function POST(req: Request, res: NextResponse) {
     return NextResponse.json(
       {
         message:
-          existingAddresses.length > 0
-            ? `The following addresses already exist: ${existingAddresses.join(
-                ", "
-              )}, but the rest of the addresses have been added`
-            : `All addresses were successfully added`,
+          addedAddresses.length > 0
+            ? `Addresses successfully added: ${addedAddresses.join(", ")}`
+            : `All addresses were already in the database`,
       },
-      { status: existingAddresses.length > 0 ? 201 : 200 }
+      { status: 201 }
     );
   } catch (error) {
     console.error("Error processing request:", error);

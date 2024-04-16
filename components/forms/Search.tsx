@@ -23,7 +23,13 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
   // // const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    // const interval = setInterval(() => {
+    //   users(); // Call the users function
+    // }, 30000);
     users();
+
+    // Clean up the interval on component unmount
+    // return () => clearInterval(interval);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

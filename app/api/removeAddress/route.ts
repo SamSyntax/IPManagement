@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   const body = await req.json();
-  console.log(body);
 
   try {
     const user = await prisma.user.findFirst({

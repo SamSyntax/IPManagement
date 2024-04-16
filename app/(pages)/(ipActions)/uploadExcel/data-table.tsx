@@ -101,11 +101,13 @@ export function DataTable<TData, TValue>({
                 />
               </SelectTrigger>
               <SelectContent side="bottom">
-                {[10, 15, 20, 25, 30, 35, 40, 45, 50].map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
-                  </SelectItem>
-                ))}
+                {[10, 15, 20, 25, 30, 35, 40, 45, 50, 100, 200, 500, 1000].map(
+                  (pageSize) => (
+                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                      {pageSize}
+                    </SelectItem>
+                  )
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -148,8 +150,11 @@ export function DataTable<TData, TValue>({
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            Page{" "}
+            {table.getPageCount() === 0
+              ? table.getState().pagination.pageIndex
+              : table.getState().pagination.pageIndex + 1}{" "}
+            of {table.getPageCount()}
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -233,6 +238,24 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
+      <div className="flex items-center justify-end space-x-2 m-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 }

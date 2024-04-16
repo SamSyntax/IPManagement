@@ -12,12 +12,9 @@ import {
 } from "./ui/alert-dialog";
 import { parseData } from "./data-table";
 import { useRouter } from "next/navigation";
-import {
-  deleteManyUsers,
-  deleteUser,
-  releaseIp,
-} from "@/lib/actions/userActions";
+
 import { toast } from "./ui/use-toast";
+import axios from "axios";
 
 interface Props {
   simsId?: string;
@@ -51,7 +48,8 @@ const Dialog = ({ simsId, ip, title, func, bulk, type, action }: Props) => {
 
   const handleDeleteManyUsers = async () => {
     try {
-      const response = await deleteManyUsers(simsIds);
+      const response = await axios.post("/api/deleteManyUsers", { simsIds });
+
       toast({
         title: "Users have been deleted",
         description:
@@ -59,39 +57,32 @@ const Dialog = ({ simsId, ip, title, func, bulk, type, action }: Props) => {
             ? `Users ${simsIds.join(", ")} have been deleted`
             : `User ${simsId} has been deleted`,
       });
-      if (response?.status !== 200) {
-        throw new Error();
-      }
-    } catch (error) {
-      console.error("Error deleting users", error);
+    } catch (error: any) {
       toast({
         title: "Ughh, something went wrong!",
-        description:
-          simsIds.length > 1 && bulk
-            ? `We couldn't delete users: ${simsIds.join(", ")}`
-            : `We couldn't delete user: ${simsId}`,
+        description: `${error!.response.data.error}`,
         variant: "destructive",
       });
-    } finally {
-      router.push("/");
     }
   };
 
   const handleRelease = async () => {
     try {
-      const response = await releaseIp(simsId!);
+      const response = await axios.post("/api/removeAddress", {
+        simsId: simsId,
+      });
       toast({
         title: "IP Address has been released",
         description: `IP Address ${ip} has been released`,
       });
-    } catch (error) {
+      return response.data;
+    } catch (error: any) {
       console.error("Error releasing IP Address", error);
       toast({
         title: "Ughh, something went wrong!",
-        description: `We couldn't release IP Address: ${ip} `,
+        description: `${error.response.data.error} `,
+        variant: "destructive",
       });
-    } finally {
-      router.push("/");
     }
   };
 

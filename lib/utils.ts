@@ -15,6 +15,5 @@ export async function parseExcelData(filePath: string): Promise<any[]> {
   const workbook = xlsx.readFile("../uploads/users.xlsx");
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
   const data = xlsx.utils.sheet_to_json(worksheet);
-  console.log(data);
   return data;
 }

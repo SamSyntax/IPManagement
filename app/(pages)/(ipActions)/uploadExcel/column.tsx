@@ -9,7 +9,7 @@ import { ArrowUpDown } from "lucide-react";
 export type Address = {
   address: string;
   type: "P4" | "P6";
-  region: "EMEA" | "APAC" | "AMERCIAS";
+  region: "EMEA" | "APAC" | "AMERCIAS" | "AUSTRALIA";
 };
 
 export const columns: ColumnDef<Address>[] = [

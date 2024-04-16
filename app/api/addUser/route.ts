@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const simsIdSchema = z.string().length(8);
-const regionSchema = z.enum(["EMEA", "APAC", "AMERICAS"]);
+const regionSchema = z.enum(["EMEA", "APAC", "AMERICAS", "AUSTRALIA"]);
 const typeSchema = z.enum(["P4", "P6"]);
 
 const userInputSchema = z.object({

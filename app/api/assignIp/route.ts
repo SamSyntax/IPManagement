@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 const userInputSchema = z.object({
   simsId: z.string().length(8),
   type: z.enum(["P4", "P6"]),
-  region: z.enum(["EMEA", "APAC", "AMERICAS"]),
+  region: z.enum(["EMEA", "APAC", "AMERICAS", "AUSTRALIA"]),
 });
 
 export async function POST(req: Request) {

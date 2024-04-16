@@ -31,7 +31,7 @@ export type Vpn = {
   simsId: string;
   ip: string;
   type: "P4" | "P6";
-  region: "EMEA" | "APAC" | "AMERICAS";
+  region: "EMEA" | "APAC" | "AMERICAS" | "AUSTRALIA";
   toggleRowSelection: (simsId: string) => void;
 };
 

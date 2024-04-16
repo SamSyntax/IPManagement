@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const bodySchema = z.object({
   address: z.string().ip("v4"),
   type: z.enum(["P4", "P6"]),
-  region: z.enum(["EMEA", "APAC", "AMERICAS"]),
+  region: z.enum(["EMEA", "APAC", "AMERICAS", "AUSTRALIA"]),
 });
 
 export async function POST(req: Request, res: NextResponse) {

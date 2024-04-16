@@ -43,7 +43,7 @@ const userInputSchema = z.object({
     .regex(/^[a-zA-Z0-9]+$/, "No special characters are allowed")
     .length(8, { message: "SIMSID must be exactly 8 characters long." }),
   type: z.enum(["P4", "P6"]),
-  region: z.enum(["EMEA", "APAC", "AMERICAS"]),
+  region: z.enum(["EMEA", "APAC", "AMERICAS", "AUSTRALIA"]),
 });
 
 const AddSheet = ({
@@ -198,6 +198,14 @@ const AddSheet = ({
                           {...form.register("region")}
                         />
                         AMERICAS
+                      </label>
+                      <label className="flex items-center justify-center gap-2">
+                        <input
+                          type="radio"
+                          value="AUSTRALIA"
+                          {...form.register("region")}
+                        />
+                        AUSTRALIA
                       </label>
                     </div>
                     <div className="flex gap-8 items-center justify-start">

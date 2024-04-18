@@ -76,6 +76,7 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
           data={searchUsers}
           // @ts-ignore
           columns={cols === "ip" ? ipColumns : userColumns}
+          table={cols === "ip" ? "ip" : "user"}
         />
       </div>
     </div>

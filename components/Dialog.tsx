@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 
 import { toast } from "./ui/use-toast";
 import axios from "axios";
+import { deleteIp } from "@/lib/actions/ipActions";
 
 interface Props {
   simsId?: string;
@@ -23,13 +24,13 @@ interface Props {
   bulk: boolean;
   type: "users" | "ips";
   action: "delete" | "release";
-  func: (simsIds?: string[], simsId?: string) => void;
+  target?: "user" | "ip";
+  func: ({ ...props }) => void;
 }
 
-const Dialog = ({ simsId, ip, title, func, bulk, type, action }: Props) => {
+const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
   const simsIds: string[] = [];
   const ips: string[] = [];
-  const router = useRouter();
   if (type === "ips") {
     parseData.map((item: any) => {
       simsIds.push(item.simsId);
@@ -86,6 +87,24 @@ const Dialog = ({ simsId, ip, title, func, bulk, type, action }: Props) => {
     }
   };
 
+  const handleDeleteIP = async () => {
+    try {
+      const response = await axios.post("/api/deleteAddress", { address: ip });
+      toast({
+        title: "IP Address has been deleted",
+        description: `IP Address ${ip} has been deleted`,
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Ughh, something went wrong!",
+        description: `${error.response.data.error} `,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div>
       <AlertDialog>
@@ -95,12 +114,17 @@ const Dialog = ({ simsId, ip, title, func, bulk, type, action }: Props) => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            {action === "delete" ? (
+            {action === "delete" && target === "user" ? (
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete
                 user(s): <b>{bulk ? simsIds.join(", ") : simsId}</b> from our
                 VPN database and release IP Address:{" "}
                 <b>{bulk ? ips.join(", ") : ip}</b>.
+              </AlertDialogDescription>
+            ) : action === "delete" && type === "ips" ? (
+              <AlertDialogDescription>
+                This action cannot be undone. This will delete IP Address:{" "}
+                <b>{ip}</b> from our database.
               </AlertDialogDescription>
             ) : (
               <AlertDialogDescription>
@@ -113,7 +137,13 @@ const Dialog = ({ simsId, ip, title, func, bulk, type, action }: Props) => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={
-                action === "delete" ? handleDeleteManyUsers : handleRelease
+                action === "delete" && type === "users"
+                  ? handleDeleteManyUsers
+                  : action === "release" && type === "users"
+                  ? handleRelease
+                  : action === "delete" && type === "ips"
+                  ? handleDeleteIP
+                  : handleRelease
               }
             >
               Continue

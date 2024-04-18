@@ -17,9 +17,8 @@ model User {
   id          Int        @id @default(autoincrement())
   simsId      String     @unique
   ipAddress   IPAddress?
-  ip          String?
+  address     String?
   ipAddressId Int?       @unique
-
 }
 
 model IPAddress {
@@ -32,8 +31,6 @@ model IPAddress {
   simsId  String? @unique
 }
 
-
-
 enum Type {
   P4
   P6
@@ -45,5 +42,3 @@ enum Region {
   AMERICAS
   AUSTRALIA
 }
-
-

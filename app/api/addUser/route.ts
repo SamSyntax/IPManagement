@@ -53,14 +53,14 @@ export async function POST(req: Request) {
         isTaken: false,
       },
     });
-    if (user && user.ip === null) {
+    if (user && user.address === null) {
       await prisma.user.update({
         where: {
           simsId: body.simsId,
         },
         data: {
           ipAddressId: ipAddress?.id,
-          ip: ipAddress?.address,
+          address: ipAddress?.address,
         },
       });
       isExisting = true;
@@ -87,7 +87,7 @@ export async function POST(req: Request) {
         data: {
           simsId: body.simsId,
           ipAddressId: ipAddress.id,
-          ip: ipAddress.address,
+          address: ipAddress.address,
         },
       });
     }

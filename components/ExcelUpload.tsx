@@ -71,7 +71,7 @@ export function UploadExcel() {
 
   return (
     <div className="w-screen p-24 flex flex-col gap-4 justify-center items-center ">
-      <div className="flex gap-2 items-center justify-start min-w-[900px]  ">
+      <div className="flex gap-2 items-center justify-start min-w-[1200px]  ">
         <Input
           className="max-w-[250px]"
           type="file"

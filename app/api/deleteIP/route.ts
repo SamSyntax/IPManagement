@@ -29,7 +29,7 @@ export async function POST(req: Request) {
           simsId: ip.simsId,
         },
         data: {
-          ip: null,
+          address: null,
           ipAddressId: null,
         },
       });

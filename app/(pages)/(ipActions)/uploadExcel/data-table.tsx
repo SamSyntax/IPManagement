@@ -59,6 +59,7 @@ export function DataTable<TData, TValue>({
     []
   );
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [filter, setFilter] = useState<string>("");
   const table = useReactTable({
     data,
     columns,
@@ -78,7 +79,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md border min-w-[700px] max-w-[900px]">
+    <div className="rounded-md border min-w-[700px] max-w-[1200px] md:min-w-[1200px]">
       <div className="flex flex-col items-center justify-between p-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredRowModel().rows.length} row(s).
@@ -101,7 +102,7 @@ export function DataTable<TData, TValue>({
                 />
               </SelectTrigger>
               <SelectContent side="bottom">
-                {[10, 15, 20, 25, 30, 35, 40, 45, 50, 100, 200, 500, 1000].map(
+                {[10, 15, 20, 25, 30, 35, 40, 45, 50, 100, 200].map(
                   (pageSize) => (
                     <SelectItem key={pageSize} value={`${pageSize}`}>
                       {pageSize}
@@ -113,42 +114,78 @@ export function DataTable<TData, TValue>({
           </div>
           <div className="flex items-center py-4">
             <Input
-              placeholder="Search for IP Address..."
+              placeholder={`Search for ${filter}...`}
               value={
-                (table.getColumn("address")?.getFilterValue() as string) ?? ""
+                (table.getColumn(filter)?.getFilterValue() as string) ?? ""
               }
               onChange={(event) =>
-                table.getColumn("address")?.setFilterValue(event.target.value)
+                table.getColumn(filter)?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
             />
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Columns
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className=" uppercase"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id.substring(column.id.indexOf("_") + 1)}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  Search Filter
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className=" uppercase"
+                        checked={
+                          filter ===
+                          column.id.substring(column.id.indexOf("_") + 1)
+                        }
+                        onCheckedChange={() =>
+                          setFilter(
+                            column.id.substring(column.id.indexOf("_") + 1)
+                          )
+                        }
+                      >
+                        {column.id.substring(column.id.indexOf("_") + 1)}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  Columns
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className=" uppercase"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id.substring(column.id.indexOf("_") + 1)}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
             Page{" "}
             {table.getPageCount() === 0

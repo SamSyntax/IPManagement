@@ -78,7 +78,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
     },
   },
   {
-    accessorKey: "ipAddress.address",
+    accessorKey: "address",
     header: ({ column }) => {
       return (
         <Button
@@ -176,6 +176,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
               title={`Delete ${row.original.simsId}`}
               bulk={false}
               action="delete"
+              target="user"
             />
 
             {row.original.simsId && (
@@ -194,12 +195,12 @@ export const userColumns: ColumnDef<Vpn>[] = [
                   : null}
               </DropdownMenuItem>
             )}
-            {row.original.ip ? (
+            {row.original.address ? (
               <Dialog
                 type="ips"
                 bulk={false}
-                ip={row.original.ip}
-                title={`Release ${row.original.ip}`}
+                ip={row.original.address}
+                title={`Release ${row.original.address}`}
                 simsId={row.original.simsId}
                 func={() => releaseIp(row.original.address!)}
                 action="release"
@@ -348,6 +349,17 @@ export const ipColumns: ColumnDef<Vpn>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <Dialog
+              func={() => {
+                deleteUser(row.original.simsId);
+              }}
+              type="ips"
+              ip={row.original.address}
+              simsId={row.original.simsId}
+              title={`Delete ${row.original.address}`}
+              bulk={false}
+              action="delete"
+            />
 
             {row.original.simsId && (
               <div>
@@ -359,6 +371,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
                   simsId={row.original.simsId}
                   action="delete"
                   func={() => deleteUser(row.original.simsId)}
+                  target="user"
                 />
                 <DropdownMenuItem
                   onClick={() =>
@@ -372,15 +385,6 @@ export const ipColumns: ColumnDef<Vpn>[] = [
                   Assign next free address of type {row.original.type} in region{" "}
                   {row.original.region}
                 </DropdownMenuItem>
-                <Dialog
-                  type="ips"
-                  bulk={false}
-                  ip={row.original.address}
-                  title={`Delete ${row.original.simsId}`}
-                  simsId={row.original.simsId}
-                  action="delete"
-                  func={() => deleteIp(row.original.address!)}
-                />
               </div>
             )}
           </DropdownMenuContent>
@@ -389,6 +393,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
     },
     enableSorting: false,
     enableColumnFilter: false,
+    enableHiding: false,
   },
 ];
 

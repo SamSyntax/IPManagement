@@ -26,6 +26,7 @@ import React from "react";
 import { useToast } from "../ui/use-toast";
 import { ToastAction } from "../ui/toast";
 import MessageCopy from "../MessageCopy";
+import { useGlobalState } from "@/providers/global-state";
 
 // Define the type of the response data object
 type UserDataResponse = {
@@ -38,23 +39,21 @@ type UserDataResponse = {
 };
 
 const userInputSchema = z.object({
-  simsId: z
-    .string()
-    .regex(/^[a-zA-Z0-9]+$/, "No special characters are allowed")
-    .length(8, { message: "SIMSID must be exactly 8 characters long." }),
+  simsId: z.string(),
   type: z.enum(["P4", "P6"]),
   region: z.enum(["EMEA", "APAC", "AMERICAS", "AUSTRALIA"]),
 });
 
-const AddSheet = ({
-  onCreation,
-}: {
-  onCreation: (endpoint: string) => void;
-}) => {
+interface Props {
+  type: "add" | "assign";
+  simsId?: string;
+}
+
+const AddSheet = ({ type, simsId }: Props) => {
   const form = useForm<z.infer<typeof userInputSchema>>({
     resolver: zodResolver(userInputSchema),
     defaultValues: {
-      simsId: "",
+      simsId: type === "assign" ? simsId : "",
       region: "EMEA",
       type: "P4",
     },
@@ -67,11 +66,14 @@ const AddSheet = ({
   const { toast } = useToast();
   const [userData, setUserData] = useState<any>(null);
 
+  const { setIsFetched } = useGlobalState();
+
   const onSubmit = async (data: z.infer<typeof userInputSchema>) => {
     setSubmitting(true);
     setSuccess(false);
     setUserData(null);
     try {
+      setIsFetched(true);
       const validation = userInputSchema.safeParse(data);
 
       if (!validation.success) {
@@ -123,8 +125,7 @@ const AddSheet = ({
         });
       }
     } finally {
-      onCreation("api/getAllUsers");
-
+      setIsFetched(false);
       setSubmitting(false);
     }
   };
@@ -135,9 +136,17 @@ const AddSheet = ({
   return (
     <div>
       <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="outline">+ Add User</Button>
-        </SheetTrigger>
+        {type === "add" ? (
+          <SheetTrigger asChild>
+            <Button variant="outline">+ Add User</Button>
+          </SheetTrigger>
+        ) : (
+          <SheetTrigger asChild>
+            <p className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent hover:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
+              Assign Address
+            </p>
+          </SheetTrigger>
+        )}
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Add User</SheetTitle>
@@ -162,12 +171,21 @@ const AddSheet = ({
                         <FormMessage />
 
                         <FormControl className="flex flex-col gap-2 bg-zinc-800">
-                          <Input
-                            placeholder="SIMSID"
-                            {...field}
-                            onChange={handleInputChange}
-                            className="w-[280px]"
-                          />
+                          {type === "add" ? (
+                            <Input
+                              placeholder="SIMSID"
+                              {...field}
+                              onChange={handleInputChange}
+                              className="w-[280px]"
+                            />
+                          ) : (
+                            <Input
+                              placeholder={simsId}
+                              {...field}
+                              className="w-[280px]"
+                              disabled={true}
+                            />
+                          )}
                         </FormControl>
                       </FormItem>
                     )}
@@ -241,12 +259,7 @@ const AddSheet = ({
             </SheetDescription>
 
             <div className="flex flex-col gap-4 pt-2">
-              {error && (
-                <MessageCopy
-                  content={successMessage!}
-                  description="Paste to the work notes"
-                />
-              )}
+              {error && <MessageCopy content={error!} description="Message" />}
               {success && !error && (
                 <p className="text-green-500 mb-4">User added successfully!</p>
               )}

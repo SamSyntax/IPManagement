@@ -59,7 +59,7 @@ export function DataTable<TData, TValue>({
     []
   );
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [filter, setFilter] = useState<string>("");
+  const [filter, setFilter] = useState<string>("address");
   const table = useReactTable({
     data,
     columns,

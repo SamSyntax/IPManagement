@@ -11,11 +11,10 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import { parseData } from "./data-table";
-import { useRouter } from "next/navigation";
 
 import { toast } from "./ui/use-toast";
 import axios from "axios";
-import { deleteIp } from "@/lib/actions/ipActions";
+import { useGlobalState } from "@/providers/global-state";
 
 interface Props {
   simsId?: string;
@@ -47,8 +46,12 @@ const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
     simsIds.push(simsId!);
   }
 
+  const { setIsFetched } = useGlobalState();
+
   const handleDeleteManyUsers = async () => {
     try {
+      setIsFetched(true);
+
       const response = await axios.post("/api/deleteManyUsers", { simsIds });
 
       toast({
@@ -64,11 +67,15 @@ const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
         description: `${error!.response.data.error}`,
         variant: "destructive",
       });
+    } finally {
+      setIsFetched(false);
     }
   };
 
   const handleRelease = async () => {
     try {
+      setIsFetched(true);
+
       const response = await axios.post("/api/removeAddress", {
         simsId: simsId,
       });
@@ -76,6 +83,7 @@ const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
         title: "IP Address has been released",
         description: `IP Address ${ip} has been released`,
       });
+
       return response.data;
     } catch (error: any) {
       console.error("Error releasing IP Address", error);
@@ -84,11 +92,15 @@ const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
         description: `${error.response.data.error} `,
         variant: "destructive",
       });
+    } finally {
+      setIsFetched(false);
     }
   };
 
   const handleDeleteIP = async () => {
     try {
+      setIsFetched(true);
+
       const response = await axios.post("/api/deleteAddress", { address: ip });
       toast({
         title: "IP Address has been deleted",
@@ -102,6 +114,29 @@ const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
         description: `${error.response.data.error} `,
         variant: "destructive",
       });
+    } finally {
+      setIsFetched(false);
+    }
+  };
+
+  const handleDeleteManyIPs = async () => {
+    try {
+      setIsFetched(true);
+
+      const response = await axios.post("/api/deleteManyAddresses", { ips });
+      toast({
+        title: "IP Addresses have been deleted!",
+        description: `IP Addresses ${ips.join(", ")} have been deleted!`,
+      });
+    } catch (error: any) {
+      console.error("Error releasing IP Address", error);
+      toast({
+        title: "Ughh, something went wrong!",
+        description: `${error.response.data.error} `,
+        variant: "destructive",
+      });
+    } finally {
+      setIsFetched(false);
     }
   };
 
@@ -121,10 +156,15 @@ const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
                 VPN database and release IP Address:{" "}
                 <b>{bulk ? ips.join(", ") : ip}</b>.
               </AlertDialogDescription>
-            ) : action === "delete" && type === "ips" ? (
+            ) : action === "delete" && type === "ips" && !bulk ? (
               <AlertDialogDescription>
                 This action cannot be undone. This will delete IP Address:{" "}
                 <b>{ip}</b> from our database.
+              </AlertDialogDescription>
+            ) : action === "delete" && type === "ips" && target === "ip" ? (
+              <AlertDialogDescription>
+                This action cannot be undone. This will delete IP Addresses:{" "}
+                <b>{ips.join(", ")}</b>
               </AlertDialogDescription>
             ) : (
               <AlertDialogDescription>
@@ -141,8 +181,10 @@ const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
                   ? handleDeleteManyUsers
                   : action === "release" && type === "users"
                   ? handleRelease
-                  : action === "delete" && type === "ips"
+                  : action === "delete" && type === "ips" && !bulk
                   ? handleDeleteIP
+                  : action === "delete" && type === "ips" && target === "ip"
+                  ? handleDeleteManyIPs
                   : handleRelease
               }
             >

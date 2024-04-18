@@ -19,8 +19,7 @@ import {
   releaseIp,
 } from "@/lib/actions/userActions";
 import Dialog from "./Dialog";
-import { deleteIp } from "@/lib/actions/ipActions";
-import axios from "axios";
+import AddSheet from "./forms/addSheet";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -179,7 +178,9 @@ export const userColumns: ColumnDef<Vpn>[] = [
               target="user"
             />
 
-            {row.original.simsId && (
+            <AddSheet type="assign" simsId={row.original.simsId} />
+
+            {row.original.address && (
               <DropdownMenuItem
                 onClick={() =>
                   assignNextFreeIp(
@@ -334,6 +335,18 @@ export const ipColumns: ColumnDef<Vpn>[] = [
               bulk={true}
               type="ips"
               action="delete"
+            />
+            <Dialog
+              func={() => {
+                deleteManyUsers(parseData.map((item: any) => item.simsId));
+              }}
+              title={
+                parseData.length > 1 ? "Delete addresses" : "Delete address"
+              }
+              bulk={true}
+              type="ips"
+              action="delete"
+              target="ip"
             />
           </DropdownMenuContent>
         </DropdownMenu>

@@ -6,6 +6,7 @@ import { DataTable } from "@/components/data-table";
 import { userColumns, ipColumns } from "@/components/column";
 import { RefreshCcwIcon } from "lucide-react";
 import AddSheet from "./addSheet";
+import { useGlobalState } from "@/providers/global-state";
 
 interface Props {
   endpoint: string;
@@ -18,18 +19,8 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
   const [searchUsers, setSearchUsers] = useState([]);
   const [rotation, setRotation] = useState(0);
 
-  // Function to toggle the visibility of the popup
-
-  // // const [submitting, setSubmitting] = useState(false);
-
   useEffect(() => {
-    // const interval = setInterval(() => {
-    //   users(); // Call the users function
-    // }, 30000);
     users();
-
-    // Clean up the interval on component unmount
-    // return () => clearInterval(interval);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -45,6 +36,11 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
     }
   };
 
+  const { isFetched } = useGlobalState();
+
+  if (isFetched) {
+    users();
+  }
   const toggleRotation = () => {
     setRotation(rotation + 360);
   };
@@ -54,7 +50,7 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
       <div className="flex flex-col gap-2">
         <div className="flex  gap-2">
           <div className="flex-1">
-            <AddSheet onCreation={users} />
+            <AddSheet type="add" />
           </div>
           <div className="flex flex-1 items-center justify-end w-full ">
             <RefreshCcwIcon
@@ -76,7 +72,7 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
           data={searchUsers}
           // @ts-ignore
           columns={cols === "ip" ? ipColumns : userColumns}
-          table={cols === "ip" ? "ip" : "user"}
+          tableType={cols === "ip" ? "ip" : "user"}
         />
       </div>
     </div>

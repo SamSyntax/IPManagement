@@ -20,6 +20,7 @@ import {
 } from "@/lib/actions/userActions";
 import Dialog from "./Dialog";
 import AddSheet from "./forms/addSheet";
+import { useGlobalState } from "@/providers/global-state";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.

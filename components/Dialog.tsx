@@ -38,7 +38,7 @@ const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
   } else {
     parseData.map((item: any) => {
       simsIds.push(item.simsId);
-      ips.push(item.ip);
+      ips.push(item.address);
     });
   }
 
@@ -149,12 +149,11 @@ const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            {action === "delete" && target === "user" ? (
+            {action === "delete" && type === "users" ? (
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete
                 user(s): <b>{bulk ? simsIds.join(", ") : simsId}</b> from our
-                VPN database and release IP Address:{" "}
-                <b>{bulk ? ips.join(", ") : ip}</b>.
+                VPN database and release IP Address: <b>{ips.join(", ")}</b>.
               </AlertDialogDescription>
             ) : action === "delete" && type === "ips" && !bulk ? (
               <AlertDialogDescription>

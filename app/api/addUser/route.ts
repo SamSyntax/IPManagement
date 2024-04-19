@@ -2,7 +2,10 @@ import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-const simsIdSchema = z.string().length(8);
+const simsIdSchema = z
+  .string()
+  .regex(/^[a-zA-Z0-9]+$/, "No special characters are allowed")
+  .length(8);
 const regionSchema = z.enum(["EMEA", "APAC", "AMERICAS", "AUSTRALIA"]);
 const typeSchema = z.enum(["P4", "P6"]);
 

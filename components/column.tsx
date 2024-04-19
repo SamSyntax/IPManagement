@@ -332,15 +332,6 @@ export const ipColumns: ColumnDef<Vpn>[] = [
               func={() => {
                 deleteManyUsers(parseData.map((item: any) => item.simsId));
               }}
-              title={parseData.length > 1 ? "Delete users" : "Delete user"}
-              bulk={true}
-              type="ips"
-              action="delete"
-            />
-            <Dialog
-              func={() => {
-                deleteManyUsers(parseData.map((item: any) => item.simsId));
-              }}
               title={
                 parseData.length > 1 ? "Delete addresses" : "Delete address"
               }

@@ -1,35 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { z } from "zod";
-
-const userInputSchema = z.object({
-  simsId: z.string().length(8),
-});
 
 const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
+  const body = await req.json();
+
   try {
-    const body = await req.json();
-    const validation = userInputSchema.safeParse(body);
-
-    let len = "";
-
-    if (body.simsId.length < 8) {
-      len = "is too short";
-    } else if (body.simsId.length > 8) {
-      len = "is too long";
-    }
-
-    if (!validation.success) {
-      return NextResponse.json(
-        {
-          error: `SIMSID ${body.simsId} ${len}. Please make sure it's exactly 8 characters long`,
-        },
-        { status: 400 }
-      );
-    }
-
     const user = await prisma.user.findFirst({
       where: {
         simsId: body.simsId,
@@ -55,7 +32,7 @@ export async function POST(req: Request) {
 
     await prisma.iPAddress.update({
       where: {
-        id: ipAddress.id,
+        simsId: user.simsId,
       },
       data: {
         isTaken: false,
@@ -69,7 +46,7 @@ export async function POST(req: Request) {
       },
       data: {
         ipAddressId: null,
-        ip: null,
+        address: null,
       },
     });
 

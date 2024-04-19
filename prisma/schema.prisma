@@ -14,16 +14,16 @@ datasource db {
 }
 
 model User {
-  id         Int        @id @default(autoincrement())
-  simsId     String     @unique 
-  ipAddress  IPAddress? 
-  ip         String?     
-  ipAddressId Int?     @unique 
+  id          Int        @id @default(autoincrement())
+  simsId      String     @unique
+  ipAddress   IPAddress?
+  address     String?
+  ipAddressId Int?       @unique
 }
 
 model IPAddress {
   id      Int     @id @default(autoincrement())
-  address String  @unique 
+  address String  @unique
   type    Type    @default(P4)
   region  Region  @default(EMEA)
   isTaken Boolean @default(false)
@@ -40,4 +40,5 @@ enum Region {
   EMEA
   APAC
   AMERICAS
+  AUSTRALIA
 }

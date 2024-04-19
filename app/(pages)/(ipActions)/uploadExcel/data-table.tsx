@@ -9,16 +9,17 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
-  VisibilityState,
   useReactTable,
+  VisibilityState,
 } from "@tanstack/react-table";
+import { Input } from "@/components/ui/input";
 
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon,
-} from "@radix-ui/react-icons";
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import {
   Table,
@@ -28,52 +29,37 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
-import React from "react";
-import { Input } from "./ui/input";
+import { useState } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DoubleArrowLeftIcon,
+  DoubleArrowRightIcon,
+} from "@radix-ui/react-icons";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Skeleton } from "./ui/skeleton";
+} from "@/components/ui/select";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  filterTarget: string;
-  filterPlaceholder: string;
-  parseData?: TData[];
-  tableType: "user" | "ip";
 }
 
-export let parseData: any = [];
-
-export function DataTable<TData extends never[], TValue>({
+export function DataTable<TData, TValue>({
   columns,
   data,
-  tableType,
-  filterTarget,
-  filterPlaceholder,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersTableState>(
     // @ts-ignore
     []
   );
-  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
-    {}
-  );
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [filter, setFilter] = useState<string>("address");
   const table = useReactTable({
     data,
     columns,
@@ -83,54 +69,20 @@ export function DataTable<TData extends never[], TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters as any,
     getFilteredRowModel: getFilteredRowModel(),
-    onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
-
     state: {
       sorting,
       // @ts-ignore
       columnFilters,
       columnVisibility,
-      rowSelection,
     },
   });
-
-  const [showSkeletion, setShowSkeleton] = useState(true);
-  const [filter, setFilter] = useState<string>(
-    tableType === "ip" ? "address" : "simsId"
-  );
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (table.getRowModel().rows.length === 0) {
-        setShowSkeleton(false);
-      }
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [table]);
-
-  const [selectedData, setSelectedData] = useState<TData[]>([]);
-
-  useEffect(() => {
-    const newData: TData[] = [];
-    Object.keys(rowSelection).forEach((key) => {
-      const index = parseInt(key, 10); // Convert key to integer
-      if (!isNaN(index) && index >= 0 && index < data.length) {
-        // @ts-ignore
-        newData.push(data[index]);
-      }
-    });
-    setSelectedData(newData);
-  }, [rowSelection, data]);
-
-  parseData = selectedData;
 
   return (
     <div className="rounded-md border min-w-[700px] max-w-[1200px] md:min-w-[1200px]">
       <div className="flex flex-col items-center justify-between p-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} row(s).
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
           {/* Add other filters or controls as needed */}
@@ -233,6 +185,7 @@ export function DataTable<TData extends never[], TValue>({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
             Page{" "}
             {table.getPageCount() === 0
@@ -307,36 +260,16 @@ export function DataTable<TData extends never[], TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={row.id}>
+                  <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
               </TableRow>
             ))
-          ) : showSkeletion ? (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                <div className="flex space-x-3">
-                  {columns.map((column, i) => (
-                    <div key={i} className="flex gap-2 w-full">
-                      <div className="flex flex-col gap-1 items-center justify-center">
-                        <Skeleton className="h-8 w-24" />
-                        <Skeleton className="h-4 w-16" />
-                      </div>
-                    </div>
-                  ))}
-                </div>{" "}
-              </TableCell>
-            </TableRow>
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-24 text-center w-full"
-              >
-                <div className="flex space-x-3 w-full text-center items-center justify-center h-full">
-                  No Results
-                </div>{" "}
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No results.
               </TableCell>
             </TableRow>
           )}

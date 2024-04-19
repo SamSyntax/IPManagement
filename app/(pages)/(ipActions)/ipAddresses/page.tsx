@@ -7,7 +7,7 @@ const Home: React.FC = (props) => {
         <Search
           filterTarget="address"
           filterPlaceholder="Search for Address..."
-          endpoint="api/getIps"
+          endpoint="api/assignIp"
           cols="ip"
         />
       </div>

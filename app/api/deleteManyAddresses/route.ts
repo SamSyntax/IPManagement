@@ -1,13 +1,13 @@
-import { PrismaClient, User } from "@prisma/client";
+import { PrismaClient, IPAddress } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const prisma = new PrismaClient();
 
-const simsIdSchema = z.string().length(8);
+const ipSchema = z.string().ip("v4");
 
 const userInputSchema = z.object({
-  simsIds: z.array(simsIdSchema),
+  ips: z.array(ipSchema),
 });
 
 export async function POST(req: Request) {
@@ -25,65 +25,63 @@ export async function POST(req: Request) {
       );
     }
 
-    const { simsIds } = body;
+    const { ips } = body;
 
-    if (simsIds.length === 0) {
+    if (ips.length === 0) {
       return NextResponse.json(
         { error: "No SIMS IDs provided" },
         { status: 400 }
       );
     }
 
-    const deletedUsers: string[] = [];
-    const unexistingUsers: string[] = [];
+    const deletedIPs: string[] = [];
+    const unexistingIPs: string[] = [];
 
-    const users: (User | null)[] = await prisma.user.findMany({
+    const addresses: (IPAddress | null)[] = await prisma.iPAddress.findMany({
       where: {
-        simsId: { in: simsIds },
-      },
-      include: {
-        ipAddress: true,
+        address: { in: ips },
       },
     });
 
-    for (const user of users) {
-      if (!user) {
-        unexistingUsers.push(simsIds); // Placeholder string to satisfy type checker
+    for (const address of addresses) {
+      if (!address) {
+        unexistingIPs.push(address!.address); // Placeholder string to satisfy type checker
         continue; // Continue to the next iteration of the loop
       }
 
-      if (user.ipAddressId) {
-        await prisma.iPAddress.update({
+      if (address.simsId) {
+        await prisma.user.update({
           where: {
-            id: user.ipAddressId,
+            simsId: address.simsId,
           },
           data: {
-            isTaken: false,
+            ipAddressId: null,
+            address: null,
           },
         });
       }
 
-      if (user) {
-        await prisma.user.delete({
+      if (address) {
+        await prisma.iPAddress.delete({
           where: {
-            simsId: user.simsId,
+            address: address.address,
           },
         });
 
-        deletedUsers.push(user.simsId);
+        deletedIPs.push(address.address);
       }
     }
-    if (deletedUsers.length === 0) {
+    if (deletedIPs.length === 0) {
       return NextResponse.json(
         {
-          error: `None of the provided SIMS IDs were found`,
+          error: `None of the provided IP Addresses were found`,
         },
         { status: 404 }
       );
     } else {
       return NextResponse.json(
         {
-          message: `Following users have been deleted: ${deletedUsers.join(
+          message: `Following IP Addresses have been deleted: ${deletedIPs.join(
             ", "
           )}`,
         },

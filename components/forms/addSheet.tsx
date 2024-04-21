@@ -50,9 +50,10 @@ const userInputSchema = z.object({
 interface Props {
   type: "add" | "assign";
   simsId?: string;
+  isVisible?: boolean;
 }
 
-const AddSheet = ({ type, simsId }: Props) => {
+const AddSheet = ({ type, simsId, isVisible }: Props) => {
   const form = useForm<z.infer<typeof userInputSchema>>({
     resolver: zodResolver(userInputSchema),
     defaultValues: {
@@ -144,7 +145,7 @@ const AddSheet = ({ type, simsId }: Props) => {
             <Button variant="outline">+ Add User</Button>
           </SheetTrigger>
         ) : (
-          <SheetTrigger asChild>
+          <SheetTrigger className={isVisible ? "flex" : "hidden"} asChild>
             <p className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent hover:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
               Assign Address
             </p>

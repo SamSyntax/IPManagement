@@ -37,6 +37,7 @@ export async function POST(req: Request) {
       data: {
         isTaken: false,
         simsId: null,
+        updatedAt: new Date(),
       },
     });
 
@@ -47,6 +48,7 @@ export async function POST(req: Request) {
       data: {
         ipAddressId: null,
         address: null,
+        updatedAt: new Date(),
       },
     });
 

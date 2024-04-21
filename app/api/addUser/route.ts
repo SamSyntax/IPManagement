@@ -64,6 +64,7 @@ export async function POST(req: Request) {
         data: {
           ipAddressId: ipAddress?.id,
           address: ipAddress?.address,
+          updatedAt: new Date(),
         },
       });
       isExisting = true;
@@ -102,6 +103,7 @@ export async function POST(req: Request) {
 
       data: {
         isTaken: true,
+        updatedAt: new Date(),
         user: {
           connect: {
             simsId: body.simsId,

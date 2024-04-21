@@ -106,7 +106,9 @@ export function DataTable<TData extends never[], TValue>({
         setShowSkeleton(false);
       }
     }, 3000);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [table]);
 
   const [selectedData, setSelectedData] = useState<TData[]>([]);
@@ -150,7 +152,7 @@ export function DataTable<TData extends never[], TValue>({
                 />
               </SelectTrigger>
               <SelectContent side="bottom">
-                {[10, 15, 20, 25, 30, 35, 40, 45, 50, 100, 200].map(
+                {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 100, 200].map(
                   (pageSize) => (
                     <SelectItem key={pageSize} value={`${pageSize}`}>
                       {pageSize}
@@ -192,11 +194,13 @@ export function DataTable<TData extends never[], TValue>({
                           filter ===
                           column.id.substring(column.id.indexOf("_") + 1)
                         }
-                        onCheckedChange={() =>
+                        onCheckedChange={() => {
+                          table.resetColumnFilters();
+
                           setFilter(
                             column.id.substring(column.id.indexOf("_") + 1)
-                          )
-                        }
+                          );
+                        }}
                       >
                         {column.id.substring(column.id.indexOf("_") + 1)}
                       </DropdownMenuCheckboxItem>
@@ -329,16 +333,18 @@ export function DataTable<TData extends never[], TValue>({
               </TableCell>
             </TableRow>
           ) : (
-            <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-24 text-center w-full"
-              >
-                <div className="flex space-x-3 w-full text-center items-center justify-center h-full">
-                  No Results
-                </div>{" "}
-              </TableCell>
-            </TableRow>
+            !showSkeletion && (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center w-full"
+                >
+                  <div className="flex space-x-3 w-full text-center items-center justify-center h-full">
+                    No Results
+                  </div>{" "}
+                </TableCell>
+              </TableRow>
+            )
           )}
         </TableBody>
       </Table>

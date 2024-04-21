@@ -59,6 +59,7 @@ export async function POST(req: Request) {
           },
           data: {
             isTaken: false,
+            updatedAt: new Date(),
           },
         });
       }

@@ -145,9 +145,12 @@ export function DataTable<TData, TValue>({
                           column.id.substring(column.id.indexOf("_") + 1)
                         }
                         onCheckedChange={() =>
-                          setFilter(
-                            column.id.substring(column.id.indexOf("_") + 1)
-                          )
+                         {
+                           table.resetColumnFilters();
+                           setFilter(
+                             column.id.substring(column.id.indexOf("_") + 1)
+                           );
+                         }
                         }
                       >
                         {column.id.substring(column.id.indexOf("_") + 1)}

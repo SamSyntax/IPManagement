@@ -32,6 +32,7 @@ export async function POST(req: Request) {
           data: {
             address: null,
             ipAddressId: null,
+            updatedAt: new Date(),
           },
         });
       }

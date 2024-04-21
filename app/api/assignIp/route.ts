@@ -58,6 +58,7 @@ export async function POST(req: Request) {
       },
       data: {
         isTaken: true,
+        updatedAt: new Date(),
         user: {
           connect: {
             simsId: user.simsId,
@@ -73,6 +74,7 @@ export async function POST(req: Request) {
       },
       data: {
         ipAddressId: freeIp.id,
+        updatedAt: new Date(),
       },
     });
 

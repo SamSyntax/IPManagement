@@ -55,6 +55,7 @@ export async function POST(req: Request) {
           data: {
             isTaken: false,
             simsId: null,
+            updatedAt: new Date(),
           },
         });
       }
@@ -65,6 +66,7 @@ export async function POST(req: Request) {
         data: {
           ipAddressId: freeIp.id,
           address: freeIp.address,
+          updatedAt: new Date(),
         },
         include: {
           ipAddress: true,
@@ -79,6 +81,7 @@ export async function POST(req: Request) {
         data: {
           isTaken: true,
           simsId: body.simsId,
+          updatedAt: new Date(),
         },
       });
 

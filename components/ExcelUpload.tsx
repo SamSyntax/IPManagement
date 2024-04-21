@@ -8,6 +8,9 @@ import { Button } from "./ui/button";
 import { DataTable } from "@/app/(pages)/(ipActions)/uploadExcel/data-table";
 import { columns } from "@/app/(pages)/(ipActions)/uploadExcel/column";
 import { useToast } from "./ui/use-toast";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import Image from "next/image";
+import excelExample from "@/public/images/excelExample.png";
 
 export function UploadExcel() {
   const [data, setData] = useState<any>([]);
@@ -73,19 +76,40 @@ export function UploadExcel() {
     <div className="w-screen p-24 flex flex-col gap-4 justify-center items-center ">
       <div className="flex gap-2 items-center justify-start min-w-[1200px]  ">
         <Input
-          className="max-w-[250px]"
+          className="max-w-[250px] cursor-pointer hover:bg-accent hover:text-accent-foreground transition-all ease-in-out duration-300"
           type="file"
           accept=".xlsx, .xls"
           onChange={handleFileUpload}
-        />
-        <Button
           disabled={isSubmitting}
-          type="submit"
-          variant="outline"
-          onClick={handleSubmit}
-        >
-          {!isSubmitting ? "Upload" : "Uploading..."}
-        </Button>
+        />
+        <HoverCard>
+          <HoverCardTrigger className="flex gap-4 items-center justify-center">
+            <Button
+              disabled={isSubmitting || data.length === 0}
+              type="submit"
+              variant="outline"
+              onClick={handleSubmit}
+            >
+              {!isSubmitting ? "Upload" : "Uploading..."}
+            </Button>
+
+            <span className=" hover:border-b-2  p-1 border-primary-foreground cursor-pointer ">
+              @hover for tip
+            </span>
+          </HoverCardTrigger>
+          <HoverCardContent className="flex flex-col gap-2">
+            <p>
+              Excel file should contain headers titled: <b>address</b>,{" "}
+              <b>type</b> and <b>region</b>
+            </p>
+            <Image
+              src={excelExample}
+              height={500}
+              alt="excel file example"
+              className="rounded-md"
+            />
+          </HoverCardContent>
+        </HoverCard>
       </div>
       <div>
         <div className="w-full flex items-center justify-center">

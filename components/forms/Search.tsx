@@ -7,6 +7,7 @@ import { userColumns, ipColumns } from "@/components/column";
 import { RefreshCcwIcon } from "lucide-react";
 import AddSheet from "./addSheet";
 import { useGlobalState } from "@/providers/global-state";
+import { formDate } from "@/lib/utils";
 
 interface Props {
   endpoint: string;
@@ -15,8 +16,13 @@ interface Props {
   filterPlaceholder: string;
 }
 
+type ItemProps = {
+  updatedAt: Date;
+  createdAt: Date;
+};
+
 const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
-  const [searchUsers, setSearchUsers] = useState([]);
+  const [searchUsers, setSearchUsers] = useState<any>([]);
   const [rotation, setRotation] = useState(0);
 
   useEffect(() => {
@@ -36,6 +42,7 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
     }
   };
 
+  searchUsers.map((item: ItemProps) => console.log(formDate(item.updatedAt)));
   const { isFetched } = useGlobalState();
 
   if (isFetched) {

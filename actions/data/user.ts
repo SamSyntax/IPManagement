@@ -25,3 +25,15 @@ export const getUserBySimsId = async (simsId: string) => {
     return null;
   }
 };
+
+export const getUserById = async (id: string) => {
+  try {
+    const user = await prisma.agent.findUnique({
+      where: { id: id },
+    });
+
+    return user;
+  } catch {
+    return null;
+  }
+};

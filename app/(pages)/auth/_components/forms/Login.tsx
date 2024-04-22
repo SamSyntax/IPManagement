@@ -47,6 +47,7 @@ const AuthWrapper = ({ ...props }) => {
 
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     setError("");
+    setIsVisible(false);
     startTransition(() => {
       login(values).then((data) => {
         setError(data.error);
@@ -75,7 +76,7 @@ const AuthWrapper = ({ ...props }) => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
-                <div className="space-y-1">
+                <div className="space-y-1 ">
                   <FormField
                     control={form.control}
                     name="simsId"
@@ -115,6 +116,7 @@ const AuthWrapper = ({ ...props }) => {
                             <Button
                               size="icon"
                               variant="ghost"
+                              type="button"
                               disabled={isPending}
                               onClick={() => setIsVisible(!isVisible)}
                             >
@@ -129,7 +131,13 @@ const AuthWrapper = ({ ...props }) => {
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col items-start">
-                <Button disabled={isPending} variant="outline" type="submit">
+                <Button
+                  onKeyDown={() => setIsVisible(false)}
+                  onSubmit={() => setIsVisible(false)}
+                  disabled={isPending}
+                  variant="outline"
+                  type="submit"
+                >
                   Login
                 </Button>
               </CardFooter>

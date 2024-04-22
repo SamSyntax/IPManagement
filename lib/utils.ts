@@ -9,6 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export const Links = [
   { label: "Users", href: "/" },
   { label: "Addresses", href: "/ipAddresses" },
+  { label: "Agents", href: "/agents" },
   { label: "Add addresses", href: "/uploadExcel" },
 ];
 

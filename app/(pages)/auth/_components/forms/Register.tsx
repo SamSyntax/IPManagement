@@ -86,7 +86,7 @@ const AuthWrapper = ({ ...props }) => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-6 w-[400px]"
           >
-            <Card className="w-[400px]2">
+            <Card className="w-[400px]">
               <CardHeader>
                 <CardTitle>Sign Up</CardTitle>
                 <CardDescription>

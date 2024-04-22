@@ -5,7 +5,6 @@ import React from "react";
 
 const ExcelUpload: React.FC = async ({ ...props }) => {
   const { ...session } = await auth();
-  console.log(session.user);
   return (
     <div>
       <UploadExcel />

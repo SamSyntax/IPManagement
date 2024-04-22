@@ -13,12 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { parseData } from "./data-table";
-import {
-  assignNextFreeIp,
-  deleteManyUsers,
-  deleteUser,
-  releaseIp,
-} from "@/lib/actions/userActions";
+import { deleteManyUsers, deleteUser, releaseIp } from "@/actions/userActions";
 import Dialog from "./Dialog";
 import AddSheet from "./forms/addSheet";
 import { useGlobalState } from "@/providers/global-state";

@@ -8,6 +8,8 @@ import Logo from "@/public/images/schenker_logo.svg";
 import LogoLight from "@/public/images/schenker_logo_light.svg";
 import { ModeToggle } from "./theme-toggle";
 import { useTheme } from "next-themes";
+import { Button } from "../ui/button";
+import { signOut } from "@/auth";
 
 const Nav = () => {
   const { theme } = useTheme();
@@ -42,6 +44,7 @@ const Nav = () => {
       </div>
 
       <div className="flex gap-2">
+        <Button onClick={async () => await signOut()}>Sign Out</Button>
         <ModeToggle />
       </div>
     </nav>

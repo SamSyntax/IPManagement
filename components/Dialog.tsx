@@ -166,7 +166,6 @@ const Dialog = ({
         description: `${response.data.message}`,
       });
 
-      console.log(response.data);
     } catch (error: any) {
       toast({
         title: "Ughh, something went wrong!",

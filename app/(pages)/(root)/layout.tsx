@@ -5,7 +5,7 @@ import Nav from "@/components/nav/Nav";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import React, { Suspense } from "react";
-import PageLoading from "./(ipActions)/ipAddresses/loading";
+import PageLoading from "../(ipActions)/ipAddresses/loading";
 
 const geist = GeistSans;
 export const metadata: Metadata = {

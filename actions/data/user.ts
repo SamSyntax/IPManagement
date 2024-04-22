@@ -20,7 +20,6 @@ export const getUserBySimsId = async (simsId: string) => {
     const user = await prisma.agent.findUnique({
       where: { simsId: simsId },
     });
-
     return user;
   } catch {
     return null;

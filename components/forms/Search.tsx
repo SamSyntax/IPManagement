@@ -42,7 +42,6 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
     }
   };
 
-  searchUsers.map((item: ItemProps) => console.log(formDate(item.updatedAt)));
   const { isFetched } = useGlobalState();
 
   if (isFetched) {

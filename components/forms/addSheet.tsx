@@ -275,7 +275,7 @@ const AddSheet = ({ type, simsId, isVisible }: Props) => {
                       description="Paste to the work notes"
                     />
                     <MessageCopy
-                      content={`User ${userData.simsId}`}
+                      content={`Vendor IP ${userData.type} (${userData.region}) ${userData.address} has been added.`}
                       description="Paste to the resolution notes"
                     />
                   </div>

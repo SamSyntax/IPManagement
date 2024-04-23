@@ -7,16 +7,9 @@ import { Toaster } from "@/components/ui/toaster";
 // @ts-ignore
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en">
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <body className={GeistSans.className}>
-          <main className="overflow-x-hidden">
-            <Suspense fallback={<PageLoading />}> {children}</Suspense>
-          </main>
-          <Toaster />
-        </body>
-      </ThemeProvider>
-    </html>
+    <body className={GeistSans.className}>
+      <Suspense fallback={<PageLoading />}> {children}</Suspense>
+    </body>
   );
 };
 

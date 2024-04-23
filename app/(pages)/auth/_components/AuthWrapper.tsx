@@ -11,7 +11,7 @@ import { useTheme } from "next-themes";
 import Register from "./forms/Register";
 
 const AuthWrapper = ({ ...props }) => {
-  const { theme } = useTheme();
+  const { theme, systemTheme } = useTheme();
   return (
     <div className="flex flex-col  h-full w-screen">
       <div className="w-screen flex items-center justify-end p-8 sticky">
@@ -21,7 +21,8 @@ const AuthWrapper = ({ ...props }) => {
         <Tabs defaultValue="SignIn" className=" w-[400px] ">
           <div className="flex flex-col items-center justify-center space-y-8">
             <div className="flex w-full justify-center items-center">
-              {theme === "dark" ? (
+              {theme === "dark" ||
+              (theme === "system" && systemTheme === "dark") ? (
                 <Image src={LogoLight} alt="DB Schenker Logo" width={200} />
               ) : (
                 <Image src={Logo} alt="DB Schenker Logo" width={200} />

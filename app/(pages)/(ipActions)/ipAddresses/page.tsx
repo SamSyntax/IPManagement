@@ -1,6 +1,6 @@
 import Search from "@/components/forms/Search";
 
-const Home: React.FC = (props) => {
+const page: React.FC = (props) => {
   return (
     <main className="flex min-h-[85vh] flex-col items-center justify-between p-24">
       <div className="flex flex-wrap items-center justify-center">
@@ -15,4 +15,4 @@ const Home: React.FC = (props) => {
   );
 };
 
-export default Home;
+export default page;

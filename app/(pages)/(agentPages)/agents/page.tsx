@@ -8,7 +8,7 @@ import UserCard from "../_components/UserCard";
 import Link from "next/link";
 
 // @ts-ignore
-const Home: React.FC = async () => {
+const page: React.FC = async (props) => {
   const prisma = new PrismaClient();
   const agents = await prisma.agent.findMany().then((res) => res);
 
@@ -60,4 +60,4 @@ const Home: React.FC = async () => {
   );
 };
 
-export default Home;
+export default page;

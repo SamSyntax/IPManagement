@@ -5,7 +5,7 @@ import Image from "next/image";
 import React from "react";
 import heroImg from "@/public/gifs/401_unauthorized.gif";
 
-export const Agents = async ({ ...props }) => {
+export default async function Home({ ...props }) {
   const prisma = new PrismaClient();
   const agents = await prisma.agent.findMany().then((res) => res);
 

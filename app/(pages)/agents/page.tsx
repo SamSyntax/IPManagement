@@ -5,7 +5,8 @@ import Image from "next/image";
 import React from "react";
 import heroImg from "@/public/gifs/401_unauthorized.gif";
 
-export default async function Home({ ...props }) {
+// @ts-ignore
+const Home: React.FC = async ({...props}) =>  {
   const prisma = new PrismaClient();
   const agents = await prisma.agent.findMany().then((res) => res);
 
@@ -51,4 +52,4 @@ export default async function Home({ ...props }) {
   );
 };
 
-
+export default Home;

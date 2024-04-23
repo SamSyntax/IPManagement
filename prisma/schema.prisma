@@ -11,65 +11,58 @@ generator client {
 // prisma/schema.prisma
 datasource db {
   provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
+  url       = env("DATABASE_URL")
   directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
+  id          String     @id @default(cuid())
   simsId      String     @unique
   ipAddress   IPAddress?
+  action      Action[]
   address     String?
   ipAddressId Int?       @unique
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt 
+  updatedAt   DateTime   @updatedAt
 }
 
 model IPAddress {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   address   String   @unique
   type      Type     @default(P4)
   region    Region   @default(EMEA)
   isTaken   Boolean  @default(false)
   user      User?    @relation(fields: [simsId], references: [simsId], onDelete: SetNull)
+  action    Action[]
   simsId    String?  @unique
-  createdAt DateTime @default(now()) 
-  updatedAt DateTime 
+  createdAt DateTime @default(now())
+  updatedAt DateTime
 }
 
 model Agent {
-  id        String   @unique @id @default(cuid())
-  simsId    String   @unique
+  id        String    @id @unique @default(cuid())
+  simsId    String    @unique
   password  String
   branch    String?
   name      String
   surname   String
-  email     String   @unique
-  role      Role     @default(AGENT)
-  createdAt DateTime @default(now())
-  accounts      Account[]
-  updatedAt DateTime?  
+  email     String    @unique
+  role      Role      @default(AGENT)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+  action    Action[]
 }
 
-model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
- 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
- 
-  agent Agent @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
-  @@id([provider, providerAccountId])
+model Action {
+  id         String    @id @unique @default(cuid())
+  agent      Agent     @relation(fields: [agentId], references: [id])
+  agentId    String    @unique
+  ipAddress  IPAddress @relation(fields: [addressId], references: [id])
+  addressId  String
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String
+  actionType String
+  createdAt  DateTime  @default(now())
 }
 
 enum Role {

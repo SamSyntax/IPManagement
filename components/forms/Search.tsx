@@ -52,7 +52,7 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
   };
 
   return (
-    <div className="w-screen flex justify-center items-center flex-col gap-20 z-0">
+    <div className="w-screen flex justify-center items-center flex-col gap-20 z-1">
       <div className="flex flex-col gap-2">
         <div className="flex  gap-2">
           <div className="flex-1">
@@ -60,7 +60,7 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
           </div>
           <div className="flex flex-1 items-center justify-end w-full ">
             <RefreshCcwIcon
-              className="transform transition-transform cursor-pointer  ease-out duration-500"
+              className="transform transition-transform cursor-pointer  ease-out duration-500 z-1"
               style={{
                 transform: `rotate(-${rotation}deg)`,
                 transition: "transform 0.5s ease-out",

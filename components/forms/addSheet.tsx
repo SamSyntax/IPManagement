@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { set, z } from "zod";
 import axios from "axios";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -31,6 +31,7 @@ import { useGlobalState } from "@/providers/global-state";
 // Define the type of the response data object
 type UserDataResponse = {
   message: string;
+  workNotes: string;
   error?: string;
   simsId: string;
   region: string;
@@ -67,6 +68,7 @@ const AddSheet = ({ type, simsId, isVisible }: Props) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [workNotesMessage, setWorkNotesMessage] = useState<string | null>(null);
   const { toast } = useToast();
   const [userData, setUserData] = useState<any>(null);
 
@@ -86,9 +88,10 @@ const AddSheet = ({ type, simsId, isVisible }: Props) => {
 
       const response = await axios.post<UserDataResponse>("/api/addUser", data);
 
-      const res = response.data.message;
+      const res = response.data;
 
-      setSuccessMessage(res.toString());
+      setSuccessMessage(res.message.toString());
+      setWorkNotesMessage(res.workNotes.toString());
       setSuccess(true);
 
       if (response.status === 201) {
@@ -271,11 +274,11 @@ const AddSheet = ({ type, simsId, isVisible }: Props) => {
                 {success && !error && (
                   <div className="flex flex-col gap-4">
                     <MessageCopy
-                      content={successMessage!}
+                      content={workNotesMessage!}
                       description="Paste to the work notes"
                     />
                     <MessageCopy
-                      content={`Vendor IP ${userData.type} (${userData.region}) ${userData.address} has been added.`}
+                      content={successMessage!}
                       description="Paste to the resolution notes"
                     />
                   </div>

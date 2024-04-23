@@ -118,7 +118,9 @@ export async function POST(req: Request) {
         message: isExisting
           ? `IP Address ${ipAddress.address} has been assigned to ${body.simsId}`
           : `IP Address ${ipAddress.region} ${ipAddress.type} ${ipAddress.address} has been assigned to ${body.simsId}`,
+        workNotes: `Vendor IP ${ipAddress.type} (${ipAddress.region}) ${ipAddress.address} has been added`,
       },
+
       { status: isExisting ? 201 : 200 }
     );
   } catch (error) {

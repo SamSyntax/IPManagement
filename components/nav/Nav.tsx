@@ -1,9 +1,8 @@
 import NavContent from "./NavContent";
-import SignOut from "./SignOut";
 
 const Nav = () => {
   return (
-    <nav className="flex p-8 justify-between">
+    <nav className="flex p-8 justify-between sticky">
       <NavContent />
     </nav>
   );

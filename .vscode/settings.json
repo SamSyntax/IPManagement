@@ -1,7 +1,19 @@
 {
-  "WillLuke.nextjs.addTypesOnSave": true,
+  "WillLuke.nextjs.addTypesOnSave": false,
   "WillLuke.nextjs.hasPrompted": true,
   "appService.zipIgnorePattern": ["node_modules{,/**}", ".vscode{,/**}"],
   "appService.defaultWebAppToDeploy": "/subscriptions/c883dd02-0699-4f12-9cc0-362b63007b2d/resourceGroups/dbs-ip/providers/Microsoft.Web/sites/dbs-ip",
-  "appService.deploySubpath": "."
+  "appService.deploySubpath": ".",
+  "emmet.preferences": {},
+  "reactSnippets.settings.typescript": true,
+  "eslint.useESLintClass": true,
+  "jsJsxSnippets.settings.typing": false,
+  "vs-code-prettier-eslint.prettierLast": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "editor.autoClosingOvertype": "never",
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always",
+    "source.organizeImports": "always"
+  }
 }

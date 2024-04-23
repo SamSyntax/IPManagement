@@ -1,14 +1,12 @@
 import { auth } from "@/auth";
 import { formDate } from "@/lib/utils";
+import heroImg from "@/public/gifs/401_unauthorized.gif";
 import { PrismaClient } from "@prisma/client";
 import Image from "next/image";
-import React from "react";
-import heroImg from "@/public/gifs/401_unauthorized.gif";
-import UserCard from "../_components/UserCard";
 import Link from "next/link";
+import UserCard from "../_components/UserCard";
 
-// @ts-ignore
-const page: React.FC = async (props) => {
+const page: React.FC = async () => {
   const prisma = new PrismaClient();
   const agents = await prisma.agent.findMany().then((res) => res);
 
@@ -35,14 +33,14 @@ const page: React.FC = async (props) => {
     );
   }
   return (
-    <div className="w-screen h-auto p-12 flex items-center justify-center">
-      <div className="grid grid-cols-3 gap-4">
+    <div className="w-screen h-screen p-12 flex items-start justify-center overflow-visible">
+      <div className="grid grid-cols-3 gap-4 overflow-visible">
         {agents.map((agent) => (
           <div
             key={agent.id}
-            className="scale-100 hover:-translate-y-2 transition-transform ease-in-out duration-300 "
+            className="scale-100 hover:-translate-y-[2px] shadow-2xl hover:drop-shadow-2xl shadow-primary/10 transition-all ease-in-out duration-300 overflow-visible z-1 hover:z-10"
           >
-            <Link className="cursor-pointer  " href={`/agent/${agent.id}`}>
+            <Link className="cursor-pointer" href={`/agent/${agent.id}`}>
               <UserCard
                 createdAt={formDate(agent.createdAt)}
                 email={agent.email}

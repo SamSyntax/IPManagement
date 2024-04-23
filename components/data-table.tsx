@@ -128,7 +128,7 @@ export function DataTable<TData extends never[], TValue>({
   parseData = selectedData;
 
   return (
-    <div className="rounded-md border min-w-[700px] max-w-[1200px] md:min-w-[1200px]">
+    <div className="rounded-md border min-w-[700px] max-w-[1200px] md:min-w-[1200px] z-1">
       <div className="flex flex-col items-center justify-between p-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}

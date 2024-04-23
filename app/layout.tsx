@@ -13,8 +13,7 @@ export const metadata: Metadata = {
   description: "DB Schenker VPN IP Management application",
 };
 
-// @ts-ignore
-const RootLayout = ({ children }) => {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

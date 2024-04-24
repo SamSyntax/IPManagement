@@ -54,8 +54,10 @@ export async function POST(req: Request) {
           },
           data: {
             isTaken: false,
-            simsId: null,
             updatedAt: new Date(),
+            user: {
+              disconnect: true,
+            },
           },
         });
       }
@@ -66,6 +68,7 @@ export async function POST(req: Request) {
         data: {
           ipAddressId: freeIp.id,
           address: freeIp.address,
+          ipAddress: { connect: { id: freeIp.id } },
           updatedAt: new Date(),
         },
         include: {
@@ -80,7 +83,7 @@ export async function POST(req: Request) {
         },
         data: {
           isTaken: true,
-          simsId: body.simsId,
+          user: { connect: { id: user.id } },
           updatedAt: new Date(),
         },
       });

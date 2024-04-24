@@ -19,24 +19,24 @@ model User {
   id          String     @id @default(cuid())
   simsId      String     @unique
   ipAddress   IPAddress?
+  action      Action[]  
   address     String?
-  ipAddressId String?
+  ipAddressId String?       @unique
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime?
-  actions     Action[] // Track actions performed on this user
+  updatedAt   DateTime?  
 }
 
 model IPAddress {
-  id        String    @id @default(cuid())
-  address   String    @unique
-  type      Type      @default(P4)
-  region    Region    @default(EMEA)
-  isTaken   Boolean   @default(false)
-  user      User?     @relation(fields: [simsId], references: [simsId])
-  simsId    String?   @unique
-  createdAt DateTime  @default(now())
+  id        String   @id @default(cuid())
+  address   String   @unique
+  type      Type     @default(P4)
+  region    Region   @default(EMEA)
+  isTaken   Boolean  @default(false)
+  user      User?    @relation(fields: [simsId], references: [simsId], onDelete: SetNull)
+  simsId    String?  @unique
+  createdAt DateTime @default(now())
   updatedAt DateTime?
-  actions   Action[] // Track actions performed on this IP address
+  action    Action[]
 }
 
 model Agent {
@@ -50,21 +50,19 @@ model Agent {
   role      Role      @default(AGENT)
   createdAt DateTime  @default(now())
   updatedAt DateTime?
-  actions   Action[] // Track actions performed by this agent
+  action    Action[]
 }
 
 model Action {
-  id          String     @id @unique @default(cuid())
-  agent       Agent      @relation(fields: [agentId], references: [id])
-  agentId     String
-  ipAddress   IPAddress? @relation(fields: [ipAddressId], references: [id])
-  ipAddressId String?
-  user        User?      @relation(fields: [userId], references: [id])
-  userId      String?
-  actionType  ActionType
-  createdAt   DateTime   @default(now())
-
-  @@index([agentId])
+  id         String    @id @unique @default(cuid())
+  agent      Agent     @relation(fields: [agentId], references: [id])
+  agentId    String    
+  ipAddress  IPAddress? @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  addressId  String
+  user       User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  actionType String
+  createdAt  DateTime  @default(now())
 }
 
 enum Role {
@@ -83,13 +81,4 @@ enum Region {
   APAC
   AMERICAS
   AUSTRALIA
-}
-
-enum ActionType {
-  CREATE_USER
-  UPDATE_USER
-  DELETE_USER
-  CREATE_IP_ADDRESS
-  UPDATE_IP_ADDRESS
-  DELETE_IP_ADDRESS
 }

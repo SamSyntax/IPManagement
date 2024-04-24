@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -18,37 +19,39 @@ const userInputSchema = z.object({
 const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
+  const session = await auth();
   try {
     const body = await req.json();
 
     const validation = userInputSchema.safeParse(body);
 
-    let isExisting: boolean = false;
-
     if (!validation.success) {
       return NextResponse.json(
-        {
-          error: `Input data is invalid`,
-        },
+        { error: "Input data is invalid" },
         { status: 400 }
       );
     }
 
-    if (body.type === null || body.region === null) {
+    if (!session) {
       return NextResponse.json(
-        { error: "Missing type or region" },
-        { status: 400 }
+        { error: "User session not found" },
+        { status: 401 }
       );
     }
-    const user = await prisma.user.findFirst({
-      where: {
-        simsId: body.simsId,
-      },
 
-      include: {
-        ipAddress: true,
-      },
+    const user = await prisma.user.findUnique({
+      where: { simsId: body.simsId },
+      include: { ipAddress: true },
     });
+
+    if (user && user.ipAddressId) {
+      return NextResponse.json(
+        {
+          error: `User ${user.simsId} already has an IP Address assigned: ${user.ipAddress?.address} type: ${user.ipAddress?.type} region: ${user.ipAddress?.region}`,
+        },
+        { status: 405 }
+      );
+    }
 
     const ipAddress = await prisma.iPAddress.findFirst({
       where: {
@@ -57,28 +60,6 @@ export async function POST(req: Request) {
         isTaken: false,
       },
     });
-    if (user && user.address === null) {
-      await prisma.user.update({
-        where: {
-          simsId: body.simsId,
-        },
-        data: {
-          ipAddressId: ipAddress?.id,
-          address: ipAddress?.address,
-          updatedAt: new Date(),
-        },
-      });
-      isExisting = true;
-    }
-
-    if (user && user?.ipAddressId !== null) {
-      return NextResponse.json(
-        {
-          error: `User ${user.simsId} already has an IP Address assigned: ${user.ipAddress?.address} type: ${user.ipAddress?.type} region: ${user.ipAddress?.region}`,
-        },
-        { status: 405 }
-      );
-    }
 
     if (!ipAddress) {
       return NextResponse.json(
@@ -88,84 +69,71 @@ export async function POST(req: Request) {
     }
 
     if (!user) {
-      await prisma.user.create({
+      const createdUser = await prisma.user.create({
         data: {
           simsId: body.simsId,
-          ipAddressId: ipAddress.id,
+          ipAddress: { connect: { id: ipAddress.id } },
           address: ipAddress.address,
-          action: {
+          ipAddressId: ipAddress.id, // Connect the user to the IP address
+          actions: {
             create: {
-              actionType: "Creating user ${body.simsId}",
-              addressId: ipAddress.id,
-              agentId: "clvb2y90h00003mn4rtkyj9s1",
+              actionType: "CREATE_IP_ADDRESS",
+              agentId: session.user.id!,
+              ipAddressId: ipAddress.id,
             },
           },
         },
       });
+
+      await prisma.iPAddress.update({
+        where: { id: ipAddress.id },
+        data: { isTaken: true, simsId: createdUser.simsId },
+      });
     }
 
-    await prisma.iPAddress.update({
-      where: {
-        id: ipAddress.id,
-      },
-
-      data: {
-        isTaken: true,
-        updatedAt: new Date(),
-        user: {
-          connect: {
-            simsId: body.simsId,
-            id: user?.id,
-          },
+    if (user && ipAddress.id !== null) {
+      await prisma.iPAddress.update({
+        where: { id: ipAddress.id },
+        data: {
+          user: { connect: { id: user.id } },
+          isTaken: true,
+          updatedAt: new Date(),
         },
-      },
-    });
+      });
+    }
 
     return NextResponse.json(
       {
-        message: isExisting
-          ? `IP Address ${ipAddress.address} has been assigned to ${body.simsId}`
-          : `IP Address ${ipAddress.region} ${ipAddress.type} ${ipAddress.address} has been assigned to ${body.simsId}`,
+        message: `IP Address ${ipAddress.address} has been assigned to ${body.simsId}`,
         workNotes: `Vendor IP ${ipAddress.type} (${ipAddress.region}) ${ipAddress.address} has been added`,
       },
-
-      { status: isExisting ? 201 : 200 }
+      { status: 201 }
     );
   } catch (error) {
-    return NextResponse.json(
-      {
-        error: `There was an error adding a user: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      },
-      { status: 500 }
-    );
-  }
-}
-
-export async function GET(req: Request, res: Response) {
-  try {
-    // Fetch users with their associated IP addresses
-    const users = await prisma.user.findMany({
-      include: {
-        action: true,
-        ipAddress: true,
-      },
-    });
-
-    // Return the users with a success status
-    return NextResponse.json(users, { status: 200 });
-  } catch (error) {
-    // If an error occurs, handle it gracefully
-    console.error("Error occurred while fetching users:", error);
-
-    // Return an error response with a 500 status
+    console.error("Error occurred while adding a user:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
     );
   } finally {
-    // Ensure to disconnect the Prisma client after the operation
+    await prisma.$disconnect();
+  }
+}
+
+export async function GET(req: Request, res: Response) {
+  try {
+    const users = await prisma.user.findMany({
+      include: { ipAddress: true },
+    });
+
+    return NextResponse.json(users, { status: 200 });
+  } catch (error) {
+    console.error("Error occurred while fetching users:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  } finally {
     await prisma.$disconnect();
   }
 }

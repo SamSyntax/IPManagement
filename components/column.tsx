@@ -20,6 +20,7 @@ import {
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Vpn = {
+  [x: string]: any;
   address: string | undefined;
   ipAddress: any;
   id: number;
@@ -82,7 +83,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
     ),
   },
   {
-    accessorKey: "address",
+    accessorKey: "ipAddress.address",
     header: ({ column }) => {
       return (
         <Button
@@ -95,15 +96,6 @@ export const userColumns: ColumnDef<Vpn>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => (
-      <div className="flex items-center justify-start">
-        <Link href={`/user/${row.original.ipAddress.id}`}>
-          <span className="hover:text-muted-foreground transition-colors ease-in-out duration-300 rounded-md">
-            {row.getValue("address")}
-          </span>
-        </Link>
-      </div>
-    ),
   },
   {
     accessorKey: "ipAddress.type",
@@ -366,6 +358,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
       );
     },
     cell: ({ row }) => {
+      console.log(row.original);
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -406,7 +399,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
 
             {row.original.simsId && (
               <Dialog
-                type="ips"
+                type="users"
                 bulk={false}
                 ip={row.original.address}
                 title={`Delete ${row.original.simsId}`}

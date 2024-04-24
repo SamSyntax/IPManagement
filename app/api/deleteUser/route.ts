@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -11,6 +12,7 @@ const userInputSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const session = await auth();
   try {
     // Znajdź adres IP przypisany do usuniętego użytkownika i ustaw isTaken na false
 

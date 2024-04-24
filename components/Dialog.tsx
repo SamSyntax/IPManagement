@@ -1,4 +1,4 @@
-import React from "react";
+import { parseData } from "./data-table";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,12 +10,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
-import { parseData } from "./data-table";
 
-import { toast } from "./ui/use-toast";
-import axios from "axios";
 import { useGlobalState } from "@/providers/global-state";
+import axios from "axios";
 import { ScrollArea } from "./ui/scroll-area";
+import { toast } from "./ui/use-toast";
 
 interface Props {
   simsId?: string;
@@ -165,7 +164,6 @@ const Dialog = ({
         title: "New IP Address has been assigned!",
         description: `${response.data.message}`,
       });
-
     } catch (error: any) {
       toast({
         title: "Ughh, something went wrong!",
@@ -197,7 +195,8 @@ const Dialog = ({
                 <AlertDialogDescription>
                   This action cannot be undone. This will permanently delete
                   user(s): <b>{bulk ? simsIds.join(", ") : simsId}</b> from our
-                  VPN database and release IP Address: <b>{ips.join(", ")}</b>.
+                  VPN database and release IP Address:{" "}
+                  <b>{bulk ? ips.join(", ") : ip}</b>.
                 </AlertDialogDescription>
               ) : action === "delete" && type === "ips" && !bulk ? (
                 <AlertDialogDescription>

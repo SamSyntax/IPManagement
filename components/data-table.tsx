@@ -9,8 +9,8 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
-  VisibilityState,
   useReactTable,
+  VisibilityState,
 } from "@tanstack/react-table";
 
 import {
@@ -21,6 +21,12 @@ import {
 } from "@radix-ui/react-icons";
 
 import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Table,
   TableBody,
   TableCell,
@@ -28,9 +34,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "./ui/button";
+import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-import React from "react";
+import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
   Select,
@@ -39,12 +45,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "./ui/skeleton";
 
 interface DataTableProps<TData, TValue> {
@@ -307,6 +307,7 @@ export function DataTable<TData extends never[], TValue>({
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
+                onClick={() => redirect("/addresses")}
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >

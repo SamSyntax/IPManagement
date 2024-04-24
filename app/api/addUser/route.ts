@@ -40,10 +40,11 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-    let user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: {
         simsId: body.simsId,
       },
+
       include: {
         ipAddress: true,
       },
@@ -92,6 +93,13 @@ export async function POST(req: Request) {
           simsId: body.simsId,
           ipAddressId: ipAddress.id,
           address: ipAddress.address,
+          action: {
+            create: {
+              actionType: "Creating user ${body.simsId}",
+              addressId: ipAddress.id,
+              agentId: "clvb2y90h00003mn4rtkyj9s1",
+            },
+          },
         },
       });
     }
@@ -135,19 +143,18 @@ export async function POST(req: Request) {
   }
 }
 
-
 export async function GET(req: Request, res: Response) {
   try {
     // Fetch users with their associated IP addresses
-    const usersWithIPs = await prisma.user.findMany({
+    const users = await prisma.user.findMany({
       include: {
+        action: true,
         ipAddress: true,
       },
     });
-    res.ok;
 
     // Return the users with a success status
-    return NextResponse.json(usersWithIPs, { status: 200 });
+    return NextResponse.json(users, { status: 200 });
   } catch (error) {
     // If an error occurs, handle it gracefully
     console.error("Error occurred while fetching users:", error);

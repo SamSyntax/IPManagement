@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { ipColumns, userColumns } from "@/components/column";
 import { DataTable } from "@/components/data-table";
-import { userColumns, ipColumns } from "@/components/column";
-import { RefreshCcwIcon } from "lucide-react";
-import AddSheet from "./addSheet";
 import { useGlobalState } from "@/providers/global-state";
-import { formDate } from "@/lib/utils";
+import axios from "axios";
+import { RefreshCcwIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import AddSheet from "./addSheet";
 
 interface Props {
   endpoint: string;
@@ -35,7 +34,7 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
     try {
       const res = await axios.get(endpoint);
       setSearchUsers(res.data);
-
+      console.log(searchUsers);
       return res.data;
     } catch (error) {
       throw new Error("Failed to fetch users");

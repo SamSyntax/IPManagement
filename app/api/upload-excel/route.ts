@@ -1,6 +1,6 @@
-import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 const prisma = new PrismaClient();
 
@@ -46,6 +46,7 @@ export async function POST(req: Request, res: NextResponse) {
     if (newAddresses.length > 0) {
       await prisma.iPAddress.createMany({
         data: newAddresses,
+        skipDuplicates: true,
       });
       addedAddresses.push(...newAddresses.map((entry: any) => entry.address));
     }
@@ -58,7 +59,6 @@ export async function POST(req: Request, res: NextResponse) {
         { status: 410 }
       );
     }
-
 
     return NextResponse.json(
       {

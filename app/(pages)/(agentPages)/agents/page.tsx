@@ -1,22 +1,20 @@
 import { auth } from "@/auth";
+import { prisma } from "@/lib/db";
 import { formDate } from "@/lib/utils";
 import heroImg from "@/public/gifs/401_unauthorized.gif";
-import { PrismaClient } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import UserCard from "../_components/UserCard";
 
 const page: React.FC = async () => {
-  const prisma = new PrismaClient();
   const agents = await prisma.agent.findMany().then((res) => res);
 
   const session = await auth();
 
   if (
-    session?.user.role !== "GLOBAL_ADMIN" &&
-    session?.user.role !== "USER_ADMIN"
+    session!.user.role !== "GLOBAL_ADMIN" &&
+    session!.user.role !== "USER_ADMIN"
   ) {
-    console.log(session?.user.role);
     return (
       <div className="w-screen flex flex-col gap-5 items-center justify-center h-[80vh]">
         <h1 className="text-white/90 text-4xl">

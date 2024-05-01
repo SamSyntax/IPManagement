@@ -41,6 +41,8 @@
     "next-auth": "5.0.0-beta.15",
     "next-connect": "^1.0.0",
     "next-themes": "^0.3.0",
+    "nvm": "^0.0.4",
+    "pnpm": "^9.0.6",
     "prisma": "^5.12.1",
     "react": "^18",
     "react-dom": "^18",

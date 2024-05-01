@@ -45,7 +45,7 @@ function UserCard({ name, surname, simsId, createdAt, role, id, email }) {
             </Avatar>
           </div>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2 text-muted-foreground">
+        <CardContent className="flex flex-col gap-2 text-muted-foreground h-[150px]">
           <div className="flex gap-2 items-center justify-start">
             {" "}
             <Mail size={20} /> {email}{" "}

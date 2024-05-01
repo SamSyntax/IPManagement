@@ -65,19 +65,21 @@ const Profile = async ({
               </Badge>
             </div>
           </div>
-          <div className="flex gap-2 items-center justify-center">
-            <Mail />
-            <p className="text-lg text-muted-foreground font-bold">{email}</p>
-          </div>
-          <div className="flex gap-2 items-center justify-center">
-            <UserCircle />
-            <p className="text-lg text-muted-foreground font-bold">{simsId}</p>
-          </div>
-          <div className="flex gap-2 items-center justify-center">
-            <CalendarCheck />
-            <p className="text-lg text-muted-foreground font-bold">
-              {createdAt}
-            </p>
+          <div className="flex flex-col items-start justify-center gap-2 text-sm text-muted-foreground">
+            <div className="flex gap-2 items-center justify-center">
+              <Mail size={18} />
+              <p className=" font-bold">{email}</p>
+            </div>
+            <div className="flex gap-2 items-center justify-center">
+              <UserCircle size={18} />
+              <p className=" font-bold">{simsId}</p>
+            </div>
+            <div className="flex gap-2 items-center justify-center">
+              <CalendarCheck size={18} />
+              <p className="  font-bold">
+                {createdAt}
+              </p>
+            </div>
           </div>
         </div>
       </div>

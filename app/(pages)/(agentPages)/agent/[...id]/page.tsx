@@ -20,6 +20,7 @@ const page = async ({ params }: Props) => {
       surname={user?.surname!}
       id={user?.id!}
     />
+
   );
 };
 

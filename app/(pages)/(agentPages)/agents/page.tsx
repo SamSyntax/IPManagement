@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import Unathorized from "@/components/errPages/Unathorized";
 import { prisma } from "@/lib/db";
 import { formDate } from "@/lib/utils";
-import { List } from "lucide-react";
+import { SheetIcon } from "lucide-react";
 import Link from "next/link";
 import UserCard from "../_components/UserCard";
 
@@ -22,15 +22,15 @@ const page = async () => {
 
   return (
     <div className="w-[90vw] h-screen  flex flex-col items-center justify-start overflow-y-visible">
-      <div className=" w-full gap-4 flex items-center justify-center p-12 border-b border-muted">
-        <List size={40} />
+      <div className=" w-full gap-4 flex items-center justify-center p-12 border-b border-muted text-muted-foreground">
+        <SheetIcon size={40} />
         <h1 className="text-3xl font-bold">List of Agents</h1>
       </div>
       <div
         className={
-          len < 6
+          len < 4
             ? `grid grid-cols-${len} gap-4 overflow-y-visible p-24 `
-            : `grid grid-cols-6 gap-4 overflow-y-visible p-24  w-full`
+            : `grid grid-cols-4  gap-4 overflow-y-visible p-24  w-full`
         }>
         {agents.map((agent) => {
           return (

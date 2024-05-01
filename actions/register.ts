@@ -1,13 +1,13 @@
 "use server";
 
-import * as z from "zod";
 import bcrypt from "bcryptjs";
+import * as z from "zod";
 
+import { prisma } from "@/lib/db";
 import { RegisterSchema } from "@/lib/schemas/RegisterSchema";
-import { PrismaClient } from "@prisma/client";
 import { getUserByEmail, getUserBySimsId } from "./data/user";
 
-const prisma = new PrismaClient();
+
 
 export const register = async (data: z.infer<typeof RegisterSchema>) => {
   const validation = RegisterSchema.safeParse(data);

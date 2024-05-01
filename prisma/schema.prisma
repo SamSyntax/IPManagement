@@ -56,11 +56,11 @@ model Agent {
 model Action {
   id         String    @id @unique @default(cuid())
   agent      Agent     @relation(fields: [agentId], references: [id])
-  agentId    String    @unique
-  ipAddress  IPAddress @relation(fields: [addressId], references: [id])
-  addressId  String
-  user       User      @relation(fields: [userId], references: [id])
-  userId     String
+  agentId    String    
+  ipAddress  IPAddress? @relation(fields: [addressId], references: [id])
+  addressId  String?
+  user       User?      @relation(fields: [userId], references: [id])
+  userId     String?
   actionType String
   createdAt  DateTime  @default(now())
 }

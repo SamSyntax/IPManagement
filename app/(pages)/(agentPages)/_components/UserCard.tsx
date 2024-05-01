@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,7 +8,6 @@ import {
 } from "@/components/ui/card";
 import { Role } from "@prisma/client";
 import { CalendarCheck, Mail } from "lucide-react";
-import React from "react";
 
 interface Props {
   name: string;
@@ -38,7 +36,7 @@ function UserCard({ name, surname, simsId, createdAt, role, id, email }) {
             </p>
           </div>
           <div className="flex flex-1 items-start justify-end ">
-            <Avatar className="w-14 h-14">
+            <Avatar className="w-10 h-10">
               <AvatarImage
                 src="https://github.com/shadcn.png"
                 alt="@dbschenker"

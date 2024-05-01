@@ -15,10 +15,7 @@ interface Props {
   filterPlaceholder: string;
 }
 
-type ItemProps = {
-  updatedAt: Date;
-  createdAt: Date;
-};
+
 
 const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
   const [searchUsers, setSearchUsers] = useState<any>([]);
@@ -51,8 +48,8 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
   };
 
   return (
-    <div className="w-screen flex justify-center items-center flex-col gap-20 z-1">
-      <div className="flex flex-col gap-2">
+    <div className="w-full flex justify-center items-start flex-col gap-20 z-1">
+      <div className="flex flex-col gap-2 w-full">
         <div className="flex  gap-2">
           <div className="flex-1">
             <AddSheet type="add" />

@@ -1,16 +1,16 @@
 "use client";
 
+import { columns } from "@/app/(pages)/(ipActions)/uploadExcel/column";
+import { DataTable } from "@/app/(pages)/(ipActions)/uploadExcel/data-table";
+import excelExample from "@/public/images/excelExample.png";
+import axios from "axios";
+import Image from "next/image";
 import { useState } from "react";
 import * as XLSX from "xlsx";
-import { Input } from "./ui/input";
-import axios from "axios";
 import { Button } from "./ui/button";
-import { DataTable } from "@/app/(pages)/(ipActions)/uploadExcel/data-table";
-import { columns } from "@/app/(pages)/(ipActions)/uploadExcel/column";
-import { useToast } from "./ui/use-toast";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
-import Image from "next/image";
-import excelExample from "@/public/images/excelExample.png";
+import { Input } from "./ui/input";
+import { useToast } from "./ui/use-toast";
 
 export function UploadExcel() {
   const [data, setData] = useState<any>([]);
@@ -38,8 +38,7 @@ export function UploadExcel() {
       if (response.status === 201) {
         toast({
           title: "Excel uploaded successfully!",
-          description:
-            "Some of the addresses have already been in the database",
+          description: "Some of these addresses are already in the database 😉",
         });
       } else {
         toast({
@@ -73,8 +72,8 @@ export function UploadExcel() {
   };
 
   return (
-    <div className="w-screen p-24 flex flex-col gap-4 justify-center items-center ">
-      <div className="flex gap-2 items-center justify-start min-w-[1200px]  ">
+    <div className="w-full p-24 flex flex-col gap-4 justify-center items-center ">
+      <div className="flex gap-2 items-center justify-start w-full  ">
         <Input
           className="max-w-[250px] cursor-pointer hover:bg-accent hover:text-accent-foreground transition-all ease-in-out duration-300"
           type="file"
@@ -88,8 +87,7 @@ export function UploadExcel() {
               disabled={isSubmitting || data.length === 0}
               type="submit"
               variant="outline"
-              onClick={handleSubmit}
-            >
+              onClick={handleSubmit}>
               {!isSubmitting ? "Upload" : "Uploading..."}
             </Button>
 

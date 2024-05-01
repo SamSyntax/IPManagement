@@ -1,9 +1,9 @@
 import Search from "@/components/forms/Search";
 
-const page: React.FC = (props) => {
+const Home = () => {
   return (
-    <main className="flex min-h-[85vh] flex-col items-center justify-between p-24">
-      <div className="flex flex-wrap items-center justify-center">
+    <main className="flex h-screen w-[90vw] flex-col items-center justify-between p-24">
+      <div className="flex flex-wrap items-center justify-center w-full">
         <Search
           filterTarget="address"
           filterPlaceholder="Search for Address..."
@@ -15,4 +15,4 @@ const page: React.FC = (props) => {
   );
 };
 
-export default page;
+export default Home;

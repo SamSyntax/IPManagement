@@ -64,8 +64,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           SIMSID
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -88,8 +87,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           IP Address
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -97,7 +95,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
     },
     cell: ({ row }) => (
       <div className="flex items-center justify-start">
-        <Link href={`/user/${row.original.ipAddress.id}`}>
+        <Link href={`/user/${row.original.ipAddress?.id}`}>
           <span className="hover:text-muted-foreground transition-colors ease-in-out duration-300 rounded-md">
             {row.getValue("address")}
           </span>
@@ -112,8 +110,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           Type
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -127,8 +124,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           Region
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -149,8 +145,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
                 table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()
                   ? false
                   : true
-              }
-            >
+              }>
               <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>

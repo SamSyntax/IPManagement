@@ -1,10 +1,14 @@
-import { getUserBySimsId } from "@/actions/data/user";
 import { auth } from "@/auth";
+import Unathorized from "@/components/errPages/Unathorized";
 import UploadExcel from "@/components/ExcelUpload";
-import React from "react";
 
-const ExcelUpload: React.FC = async ({ ...props }) => {
-  const { ...session } = await auth();
+const Home = async () => {
+  const session = await auth();
+
+  if (session?.user.role !== "GLOBAL_ADMIN") {
+    return <Unathorized />;
+  }
+
   return (
     <div>
       <UploadExcel />
@@ -12,4 +16,4 @@ const ExcelUpload: React.FC = async ({ ...props }) => {
   );
 };
 
-export default ExcelUpload;
+export default Home;

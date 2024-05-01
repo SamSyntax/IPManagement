@@ -128,7 +128,7 @@ export function DataTable<TData extends never[], TValue>({
   parseData = selectedData;
 
   return (
-    <div className="rounded-md border min-w-[700px] max-w-[1200px] md:min-w-[1200px] z-1">
+    <div className="rounded-md border min-w-full  z-1">
       <div className="flex flex-col items-center justify-between p-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -144,8 +144,7 @@ export function DataTable<TData extends never[], TValue>({
               value={`${table.getState().pagination.pageSize}`}
               onValueChange={(value) => {
                 table.setPageSize(Number(value));
-              }}
-            >
+              }}>
               <SelectTrigger className="h-8 w-[70px]">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}
@@ -200,8 +199,7 @@ export function DataTable<TData extends never[], TValue>({
                           setFilter(
                             column.id.substring(column.id.indexOf("_") + 1)
                           );
-                        }}
-                      >
+                        }}>
                         {column.id.substring(column.id.indexOf("_") + 1)}
                       </DropdownMenuCheckboxItem>
                     );
@@ -228,8 +226,7 @@ export function DataTable<TData extends never[], TValue>({
                         checked={column.getIsVisible()}
                         onCheckedChange={(value) =>
                           column.toggleVisibility(!!value)
-                        }
-                      >
+                        }>
                         {column.id.substring(column.id.indexOf("_") + 1)}
                       </DropdownMenuCheckboxItem>
                     );
@@ -249,8 +246,7 @@ export function DataTable<TData extends never[], TValue>({
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
               onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            >
+              disabled={!table.getCanPreviousPage()}>
               <span className="sr-only">Go to first page</span>
               <DoubleArrowLeftIcon className="h-4 w-4" />
             </Button>
@@ -258,8 +254,7 @@ export function DataTable<TData extends never[], TValue>({
               variant="outline"
               className="h-8 w-8 p-0"
               onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
+              disabled={!table.getCanPreviousPage()}>
               <span className="sr-only">Go to previous page</span>
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
@@ -267,8 +262,7 @@ export function DataTable<TData extends never[], TValue>({
               variant="outline"
               className="h-8 w-8 p-0"
               onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
+              disabled={!table.getCanNextPage()}>
               <span className="sr-only">Go to next page</span>
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
@@ -276,8 +270,7 @@ export function DataTable<TData extends never[], TValue>({
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            >
+              disabled={!table.getCanNextPage()}>
               <span className="sr-only">Go to last page</span>
               <DoubleArrowRightIcon className="h-4 w-4" />
             </Button>
@@ -309,8 +302,7 @@ export function DataTable<TData extends never[], TValue>({
               <TableRow
                 onClick={() => redirect("/addresses")}
                 key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
+                data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={row.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -338,8 +330,7 @@ export function DataTable<TData extends never[], TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center w-full"
-                >
+                  className="h-24 text-center w-full">
                   <div className="flex space-x-3 w-full text-center items-center justify-center h-full">
                     No Results
                   </div>{" "}
@@ -354,16 +345,14 @@ export function DataTable<TData extends never[], TValue>({
           variant="outline"
           size="sm"
           onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
+          disabled={!table.getCanPreviousPage()}>
           Previous
         </Button>
         <Button
           variant="outline"
           size="sm"
           onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
+          disabled={!table.getCanNextPage()}>
           Next
         </Button>
       </div>

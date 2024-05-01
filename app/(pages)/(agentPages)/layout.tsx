@@ -1,8 +1,7 @@
 import "@/app/globals.css";
-import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import React, { Suspense } from "react";
-import PageLoading from "../(root)/loading";
+import PageLoading from "../(ipActions)/ipAddresses/loading";
 
 const AgentLayout = ({ children }: { children: React.ReactNode }) => {
   return (

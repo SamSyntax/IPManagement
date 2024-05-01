@@ -1,9 +1,10 @@
-import NavContent from "./NavContent";
+import NavSide from "./NavSide";
 
 const Nav = () => {
   return (
-    <nav className="flex p-8 justify-between sticky">
-      <NavContent />
+    <nav className="w-[10vw]">
+      {/* <NavContent /> */}
+      <NavSide />
     </nav>
   );
 };

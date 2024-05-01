@@ -1,26 +1,21 @@
 "use client";
 
+import { deleteManyUsers, deleteUser, releaseIp } from "@/actions/userActions";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "./ui/button";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
+import { parseData } from "./data-table";
+import Dialog from "./Dialog";
+import AddSheet from "./forms/addSheet";
+import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { parseData } from "./data-table";
-import {
-  assignNextFreeIp,
-  deleteManyUsers,
-  deleteUser,
-  releaseIp,
-} from "@/lib/actions/userActions";
-import Dialog from "./Dialog";
-import AddSheet from "./forms/addSheet";
-import { useGlobalState } from "@/providers/global-state";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -69,13 +64,21 @@ export const userColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           SIMSID
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
+    cell: ({ row }) => (
+      <div className="flex items-center justify-start">
+        <Link href={`/user/${row.original.id}`}>
+          <span className="hover:text-muted-foreground transition-colors ease-in-out duration-300 rounded-md">
+            {row.getValue("simsId")}
+          </span>
+        </Link>
+      </div>
+    ),
   },
   {
     accessorKey: "address",
@@ -84,13 +87,21 @@ export const userColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           IP Address
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
+    cell: ({ row }) => (
+      <div className="flex items-center justify-start">
+        <Link href={`/user/${row.original.ipAddress?.id}`}>
+          <span className="hover:text-muted-foreground transition-colors ease-in-out duration-300 rounded-md">
+            {row.getValue("address")}
+          </span>
+        </Link>
+      </div>
+    ),
   },
   {
     accessorKey: "ipAddress.type",
@@ -99,8 +110,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           Type
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -114,8 +124,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           Region
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -136,8 +145,7 @@ export const userColumns: ColumnDef<Vpn>[] = [
                 table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()
                   ? false
                   : true
-              }
-            >
+              }>
               <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>
@@ -166,6 +174,44 @@ export const userColumns: ColumnDef<Vpn>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
+            <AddSheet
+              type="assign"
+              isVisible={row.original.address !== null ? false : true}
+              simsId={row.original.simsId}
+            />
+
+            {row.original.address === null && <DropdownMenuSeparator />}
+
+            {row.original.address && (
+              <Dialog
+                action="assignNext"
+                bulk={false}
+                title={`Assign next free address of type ${row.original.ipAddress?.type}
+                in region ${row.original.ipAddress?.region}`}
+                type="users"
+                simsId={row.original.simsId}
+                ip={row.original.address}
+                ipType={row.original.ipAddress?.type}
+                region={row.original.ipAddress?.region}
+                target="user"
+              />
+            )}
+            {row.original.address && (
+              <div>
+                <Dialog
+                  type="ips"
+                  bulk={false}
+                  ip={row.original.address}
+                  title={`Release ${row.original.address}`}
+                  simsId={row.original.simsId}
+                  func={() => releaseIp(row.original.address!)}
+                  action="release"
+                />
+                <DropdownMenuSeparator />
+              </div>
+            )}
+
             <Dialog
               func={() => {
                 deleteUser(row.original.simsId);
@@ -178,36 +224,6 @@ export const userColumns: ColumnDef<Vpn>[] = [
               action="delete"
               target="user"
             />
-
-            <AddSheet type="assign" simsId={row.original.simsId} />
-
-            {row.original.address && (
-              <DropdownMenuItem
-                onClick={() =>
-                  assignNextFreeIp(
-                    row.original.simsId,
-                    row.original.ipAddress.type,
-                    row.original.ipAddress.region
-                  )
-                }
-              >
-                {row.original.ipAddress
-                  ? ` Assign next free address of type ${row.original.ipAddress.type}
-                in region ${row.original.ipAddress.region}`
-                  : null}
-              </DropdownMenuItem>
-            )}
-            {row.original.address ? (
-              <Dialog
-                type="ips"
-                bulk={false}
-                ip={row.original.address}
-                title={`Release ${row.original.address}`}
-                simsId={row.original.simsId}
-                func={() => releaseIp(row.original.address!)}
-                action="release"
-              />
-            ) : null}
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -354,6 +370,23 @@ export const ipColumns: ColumnDef<Vpn>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            {row.original.simsId && (
+              <div>
+                <Dialog
+                  action="assignNext"
+                  bulk={false}
+                  title={`Assign next free address of type ${row.original.type}
+                  in region ${row.original.region}`}
+                  type="users"
+                  simsId={row.original.simsId}
+                  ip={row.original.address}
+                  ipType={row.original.type}
+                  region={row.original.region}
+                  target="user"
+                />
+                <DropdownMenuSeparator />
+              </div>
+            )}
             <Dialog
               func={() => {
                 deleteUser(row.original.simsId);
@@ -367,30 +400,16 @@ export const ipColumns: ColumnDef<Vpn>[] = [
             />
 
             {row.original.simsId && (
-              <div>
-                <Dialog
-                  type="ips"
-                  bulk={false}
-                  ip={row.original.address}
-                  title={`Delete ${row.original.simsId}`}
-                  simsId={row.original.simsId}
-                  action="delete"
-                  func={() => deleteUser(row.original.simsId)}
-                  target="user"
-                />
-                <DropdownMenuItem
-                  onClick={() =>
-                    assignNextFreeIp(
-                      row.original.simsId,
-                      row.original.type,
-                      row.original.region
-                    )
-                  }
-                >
-                  Assign next free address of type {row.original.type} in region{" "}
-                  {row.original.region}
-                </DropdownMenuItem>
-              </div>
+              <Dialog
+                type="ips"
+                bulk={false}
+                ip={row.original.address}
+                title={`Delete ${row.original.simsId}`}
+                simsId={row.original.simsId}
+                action="delete"
+                func={() => deleteUser(row.original.simsId)}
+                target="user"
+              />
             )}
           </DropdownMenuContent>
         </DropdownMenu>

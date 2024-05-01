@@ -1,7 +1,14 @@
+import { auth } from "@/auth";
+import Unathorized from "@/components/errPages/Unathorized";
 import UploadExcel from "@/components/ExcelUpload";
-import React from "react";
 
-const page: React.FC = ({ ...props }) => {
+const Home = async () => {
+  const session = await auth();
+
+  if (session?.user.role !== "GLOBAL_ADMIN") {
+    return <Unathorized />;
+  }
+
   return (
     <div>
       <UploadExcel />
@@ -9,4 +16,4 @@ const page: React.FC = ({ ...props }) => {
   );
 };
 
-export default page;
+export default Home;

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "ipAddressId" SET DATA TYPE TEXT;

@@ -8,27 +8,67 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// prisma/schema.prisma
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
+  id          String     @id @default(cuid())
   simsId      String     @unique
   ipAddress   IPAddress?
+  action      Action[]
   address     String?
-  ipAddressId Int?       @unique
+  ipAddressId String?       @unique
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime?  
 }
 
 model IPAddress {
-  id      Int     @id @default(autoincrement())
-  address String  @unique
-  type    Type    @default(P4)
-  region  Region  @default(EMEA)
-  isTaken Boolean @default(false)
-  user    User?   @relation(fields: [simsId], references: [simsId], onDelete: SetNull)
-  simsId  String? @unique
+  id        String   @id @default(cuid())
+  address   String   @unique
+  type      Type     @default(P4)
+  region    Region   @default(EMEA)
+  isTaken   Boolean  @default(false)
+  user      User?    @relation(fields: [simsId], references: [simsId], onDelete: SetNull)
+  action    Action[]
+  simsId    String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime?
+}
+
+model Agent {
+  id        String    @id @unique @default(cuid())
+  simsId    String    @unique
+  password  String
+  branch    String?
+  name      String
+  surname   String
+  email     String    @unique
+  role      Role      @default(AGENT)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+  action    Action[]
+}
+
+model Action {
+  id         String    @id @unique @default(cuid())
+  agent      Agent     @relation(fields: [agentId], references: [id])
+  agentId    String    
+  ipAddress  IPAddress? @relation(fields: [addressId], references: [id])
+  addressId  String?
+  user       User?      @relation(fields: [userId], references: [id])
+  userId     String?
+  actionType String
+  createdAt  DateTime  @default(now())
+}
+
+enum Role {
+  AGENT
+  USER_ADMIN
+  GLOBAL_ADMIN
 }
 
 enum Type {

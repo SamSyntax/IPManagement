@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { set, z } from "zod";
 import axios from "axios";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -31,6 +31,7 @@ import { useGlobalState } from "@/providers/global-state";
 // Define the type of the response data object
 type UserDataResponse = {
   message: string;
+  workNotes: string;
   error?: string;
   simsId: string;
   region: string;
@@ -50,9 +51,10 @@ const userInputSchema = z.object({
 interface Props {
   type: "add" | "assign";
   simsId?: string;
+  isVisible?: boolean;
 }
 
-const AddSheet = ({ type, simsId }: Props) => {
+const AddSheet = ({ type, simsId, isVisible }: Props) => {
   const form = useForm<z.infer<typeof userInputSchema>>({
     resolver: zodResolver(userInputSchema),
     defaultValues: {
@@ -66,6 +68,7 @@ const AddSheet = ({ type, simsId }: Props) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [workNotesMessage, setWorkNotesMessage] = useState<string | null>(null);
   const { toast } = useToast();
   const [userData, setUserData] = useState<any>(null);
 
@@ -85,9 +88,10 @@ const AddSheet = ({ type, simsId }: Props) => {
 
       const response = await axios.post<UserDataResponse>("/api/addUser", data);
 
-      const res = response.data.message;
+      const res = response.data;
 
-      setSuccessMessage(res.toString());
+      setSuccessMessage(res.message.toString());
+      setWorkNotesMessage(res.workNotes.toString());
       setSuccess(true);
 
       if (response.status === 201) {
@@ -144,7 +148,7 @@ const AddSheet = ({ type, simsId }: Props) => {
             <Button variant="outline">+ Add User</Button>
           </SheetTrigger>
         ) : (
-          <SheetTrigger asChild>
+          <SheetTrigger className={isVisible ? "flex" : "hidden"} asChild>
             <p className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent hover:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
               Assign Address
             </p>
@@ -270,11 +274,11 @@ const AddSheet = ({ type, simsId }: Props) => {
                 {success && !error && (
                   <div className="flex flex-col gap-4">
                     <MessageCopy
-                      content={successMessage!}
+                      content={workNotesMessage!}
                       description="Paste to the work notes"
                     />
                     <MessageCopy
-                      content={`User ${userData.simsId}`}
+                      content={successMessage!}
                       description="Paste to the resolution notes"
                     />
                   </div>

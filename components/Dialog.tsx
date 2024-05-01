@@ -15,19 +15,32 @@ import { parseData } from "./data-table";
 import { toast } from "./ui/use-toast";
 import axios from "axios";
 import { useGlobalState } from "@/providers/global-state";
+import { ScrollArea } from "./ui/scroll-area";
 
 interface Props {
   simsId?: string;
   ip?: string;
+  ipType?: string;
+  region?: string;
   title: string;
   bulk: boolean;
   type: "users" | "ips";
-  action: "delete" | "release";
+  action: "delete" | "release" | "assignNext";
   target?: "user" | "ip";
-  func: ({ ...props }) => void;
+  func?: ({ ...props }) => void;
 }
 
-const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
+const Dialog = ({
+  simsId,
+  ip,
+  title,
+  bulk,
+  type,
+  action,
+  target,
+  region,
+  ipType,
+}: Props) => {
   const simsIds: string[] = [];
   const ips: string[] = [];
   if (type === "ips") {
@@ -140,37 +153,77 @@ const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
     }
   };
 
+  const handleAssignNext = async () => {
+    try {
+      setIsFetched(true);
+      const response = await axios.post("/api/nextFree", {
+        simsId: simsId,
+        type: ipType,
+        region: region,
+      });
+      toast({
+        title: "New IP Address has been assigned!",
+        description: `${response.data.message}`,
+      });
+
+    } catch (error: any) {
+      toast({
+        title: "Ughh, something went wrong!",
+        description: `${error.response.data.error} `,
+        variant: "destructive",
+      });
+    } finally {
+      setIsFetched(false);
+    }
+  };
+
   return (
     <div>
       <AlertDialog>
-        <AlertDialogTrigger className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent hover:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
-          {title}
-        </AlertDialogTrigger>
+        {action === "delete" ? (
+          <AlertDialogTrigger className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none text-red-600      transition-colors focus:bg-accent hover:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
+            {title}
+          </AlertDialogTrigger>
+        ) : (
+          <AlertDialogTrigger className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent hover:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
+            {title}
+          </AlertDialogTrigger>
+        )}
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            {action === "delete" && type === "users" ? (
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete
-                user(s): <b>{bulk ? simsIds.join(", ") : simsId}</b> from our
-                VPN database and release IP Address: <b>{ips.join(", ")}</b>.
-              </AlertDialogDescription>
-            ) : action === "delete" && type === "ips" && !bulk ? (
-              <AlertDialogDescription>
-                This action cannot be undone. This will delete IP Address:{" "}
-                <b>{ip}</b> from our database.
-              </AlertDialogDescription>
-            ) : action === "delete" && type === "ips" && target === "ip" ? (
-              <AlertDialogDescription>
-                This action cannot be undone. This will delete IP Addresses:{" "}
-                <b>{ips.join(", ")}</b>
-              </AlertDialogDescription>
-            ) : (
-              <AlertDialogDescription>
-                This action cannot be undone. This will release IP Address:{" "}
-                <b>{ip}</b>
-              </AlertDialogDescription>
-            )}
+            <ScrollArea className="max-h-[600px]">
+              {action === "delete" && type === "users" ? (
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  user(s): <b>{bulk ? simsIds.join(", ") : simsId}</b> from our
+                  VPN database and release IP Address: <b>{ips.join(", ")}</b>.
+                </AlertDialogDescription>
+              ) : action === "delete" && type === "ips" && !bulk ? (
+                <AlertDialogDescription>
+                  This action cannot be undone. This will delete IP Address:{" "}
+                  <b>{ip}</b> from our database.
+                </AlertDialogDescription>
+              ) : action === "delete" && type === "ips" && target === "ip" ? (
+                <AlertDialogDescription>
+                  This action cannot be undone. This will delete IP Addresses:{" "}
+                  <b>{ips.join(", ")}</b>
+                </AlertDialogDescription>
+              ) : action === "assignNext" &&
+                !bulk &&
+                type === "users" &&
+                target === "user" ? (
+                <AlertDialogDescription>
+                  This action will assign next free <b>{ipType}</b> IP Address
+                  from region <b>{region}</b> to <b>{simsId}</b>
+                </AlertDialogDescription>
+              ) : (
+                <AlertDialogDescription>
+                  This action cannot be undone. This will release IP Address:{" "}
+                  <b>{ip}</b>
+                </AlertDialogDescription>
+              )}
+            </ScrollArea>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -184,6 +237,11 @@ const Dialog = ({ simsId, ip, title, bulk, type, action, target }: Props) => {
                   ? handleDeleteIP
                   : action === "delete" && type === "ips" && target === "ip"
                   ? handleDeleteManyIPs
+                  : action === "assignNext" &&
+                    !bulk &&
+                    type === "users" &&
+                    target === "user"
+                  ? handleAssignNext
                   : handleRelease
               }
             >

@@ -72,7 +72,7 @@ export function UploadExcel() {
   };
 
   return (
-    <div className="w-full p-24 flex flex-col gap-4 justify-center items-center ">
+    <div className="w-[90vw]  h-screen flex flex-col gap-4 justify-start items-start p-24 ">
       <div className="flex gap-2 items-center justify-start w-full  ">
         <Input
           className="max-w-[250px] cursor-pointer hover:bg-accent hover:text-accent-foreground transition-all ease-in-out duration-300"
@@ -109,8 +109,8 @@ export function UploadExcel() {
           </HoverCardContent>
         </HoverCard>
       </div>
-      <div>
-        <div className="w-full flex items-center justify-center">
+      <div className="w-full">
+        <div className="w-full  flex items-center justify-center">
           <DataTable columns={columns} data={data} />
         </div>
       </div>

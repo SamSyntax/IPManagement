@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md border w-full">
+    <div className="rounded-md border w-full ">
       <div className="flex flex-col items-center justify-between p-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredRowModel().rows.length} row(s).

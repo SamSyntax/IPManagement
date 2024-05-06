@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { formDate } from "@/lib/utils";
 import * as xlsx from "xlsx";
 
-export async function GET(res: Response) {
+export async function GET(req: Request, res: Response) {
 	const date = formDate(new Date());
 
 	try {

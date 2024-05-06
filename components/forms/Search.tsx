@@ -6,6 +6,7 @@ import { useGlobalState } from "@/providers/global-state";
 import axios from "axios";
 import { RefreshCcwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import ExportData from "../ExportData";
 import AddSheet from "./addSheet";
 
 interface Props {
@@ -14,8 +15,6 @@ interface Props {
   filterTarget: string;
   filterPlaceholder: string;
 }
-
-
 
 const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
   const [searchUsers, setSearchUsers] = useState<any>([]);
@@ -51,8 +50,9 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
     <div className="w-full flex justify-center items-start flex-col gap-20 z-1">
       <div className="flex flex-col gap-2 w-full">
         <div className="flex  gap-2">
-          <div className="flex-1">
+          <div className="flex-1 flex gap-2">
             <AddSheet type="add" />
+            <ExportData />
           </div>
           <div className="flex flex-1 items-center justify-end w-full ">
             <RefreshCcwIcon

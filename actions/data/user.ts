@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db";
-import { revalidatePath } from "next/cache";
 
 export const getUserByEmail = async (email: string) => {
 	try {
@@ -57,7 +56,6 @@ export async function getActionByAgentId(id: string) {
 			},
 		});
 
-		revalidatePath;
 		return action;
 	} catch (error) {
 		throw new Error("Failed to fetch actions");

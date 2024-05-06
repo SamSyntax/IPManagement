@@ -135,7 +135,8 @@ export async function POST(req: Request) {
 			},
 		});
 
-		revalidatePath;
+		revalidatePath("/users");
+		revalidatePath("/addresses");
 
 		return NextResponse.json(
 			{

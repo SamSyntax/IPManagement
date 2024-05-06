@@ -18,7 +18,7 @@ export const Links = [
 	{
 		label: "Agents",
 		href: "/agents",
-		accessLevel: "USER_ADMIN",
+		accessLevel: "AGENT",
 		icon: () => UserCog,
 	},
 	{

@@ -7,13 +7,12 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { set, z } from "zod";
-import axios from "axios";
+import { z } from "zod";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import {
   Form,
   FormControl,
@@ -21,12 +20,13 @@ import {
   FormItem,
   FormMessage,
 } from "../ui/form";
+import { Input } from "../ui/input";
 
-import React from "react";
-import { useToast } from "../ui/use-toast";
-import { ToastAction } from "../ui/toast";
-import MessageCopy from "../MessageCopy";
 import { useGlobalState } from "@/providers/global-state";
+import React from "react";
+import MessageCopy from "../MessageCopy";
+import { ToastAction } from "../ui/toast";
+import { useToast } from "../ui/use-toast";
 
 // Define the type of the response data object
 type UserDataResponse = {

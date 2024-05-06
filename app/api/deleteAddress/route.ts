@@ -1,7 +1,12 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
+	const session = await auth();
+
+	const agentId = session?.user.id!;
+
 	try {
 		const body = await req.json();
 
@@ -31,6 +36,13 @@ export async function POST(req: Request) {
 						address: null,
 						ipAddressId: null,
 						updatedAt: new Date(),
+						action: {
+							create: {
+								actionType: `Removing ${address.address} from ${user.simsId} and deleting it.`,
+								addressId: address.id,
+								agentId: agentId,
+							},
+						},
 					},
 				});
 			}

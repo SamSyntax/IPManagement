@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -9,6 +10,10 @@ const userInputSchema = z.object({
 });
 
 export async function POST(req: Request) {
+	const session = await auth();
+
+	const agentId = session?.user.id;
+
 	try {
 		const body = await req.json();
 
@@ -62,6 +67,13 @@ export async function POST(req: Request) {
 					connect: {
 						simsId: user.simsId,
 						id: user.id,
+					},
+				},
+				action: {
+					create: {
+						actionType: `Assigning ${freeIp.address} to ${user.simsId}`,
+						agentId: agentId!,
+						userId: user.id,
 					},
 				},
 			},

@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { IPAddress } from "@prisma/client";
 import { NextResponse } from "next/server";
@@ -10,6 +11,7 @@ const userInputSchema = z.object({
 });
 
 export async function POST(req: Request) {
+	const session = await auth();
 	try {
 		const body = await req.json();
 
@@ -57,6 +59,13 @@ export async function POST(req: Request) {
 						ipAddressId: null,
 						address: null,
 						updatedAt: new Date(),
+						action: {
+							create: {
+								actionType: `Removing ${address.address} from ${address.simsId} and deleting it (BULK OPERATION)`,
+								addressId: address.id,
+								agentId: session?.user.id!,
+							},
+						},
 					},
 				});
 			}
@@ -71,6 +80,12 @@ export async function POST(req: Request) {
 				deletedIPs.push(address.address);
 			}
 		}
+		await prisma.action.create({
+			data: {
+				actionType: `Removing ${deletedIPs.length} IP Addresses from database`,
+				agentId: session?.user.id!,
+			},
+		});
 		if (deletedIPs.length === 0) {
 			return NextResponse.json(
 				{

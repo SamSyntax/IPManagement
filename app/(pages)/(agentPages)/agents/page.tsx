@@ -5,16 +5,18 @@ import { formDate } from "@/lib/utils";
 import { SheetIcon } from "lucide-react";
 import Link from "next/link";
 import UserCard from "../_components/UserCard";
+import RegisterAgent from "../_components/registerAgent";
 
 const page = async () => {
-  const agents = await prisma.agent.findMany().then((res) => res);
+  const agents = await prisma.agent.findMany({
+    orderBy: {
+      role: "desc",
+    },
+  });
 
   const session = await auth();
 
-  if (
-    session?.user.role !== "GLOBAL_ADMIN" &&
-    session?.user.role !== "USER_ADMIN"
-  ) {
+  if (!session) {
     return <Unathorized />;
   }
 
@@ -26,12 +28,22 @@ const page = async () => {
         <SheetIcon size={40} />
         <h1 className="text-3xl font-bold">List of Agents</h1>
       </div>
+
       <div
         className={
           len < 4
-            ? `grid grid-cols-${len} gap-4 overflow-y-visible p-24 `
-            : `grid grid-cols-4  gap-4 overflow-y-visible p-24  w-full`
+            ? `grid grid-cols-1 md:grid-cols-${len} gap-4 overflow-y-visible p-24 `
+            : `grid grod-cols-1 md:grid-cols-4  gap-4 overflow-y-visible p-24  w-full`
         }>
+        <div
+          className={
+            session.user.role === "USER_ADMIN" ||
+            session.user.role === "GLOBAL_ADMIN"
+              ? `col-span-full flex items-center justify-start`
+              : "hidden"
+          }>
+          <RegisterAgent creatorRole={session.user.role} />
+        </div>
         {agents.map((agent) => {
           return (
             <div

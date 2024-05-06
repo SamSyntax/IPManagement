@@ -72,7 +72,7 @@ export function UploadExcel() {
   };
 
   return (
-    <div className="w-[90vw]  h-screen flex flex-col gap-4 justify-start items-start p-24 ">
+    <div className="w-[90vw]  h-screen flex flex-col gap-2 justify-start items-start p-24 ">
       <div className="flex gap-2 items-center justify-start w-full  ">
         <Input
           className="max-w-[250px] cursor-pointer hover:bg-accent hover:text-accent-foreground transition-all ease-in-out duration-300"

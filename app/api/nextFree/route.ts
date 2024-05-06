@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -100,6 +101,8 @@ export async function POST(req: Request) {
 					updatedAt: new Date(),
 				},
 			});
+			revalidatePath("/users");
+			revalidatePath("/addresses");
 
 			return NextResponse.json(
 				{

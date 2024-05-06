@@ -1,10 +1,9 @@
-"use server";
-
 import { prisma } from "@/lib/db";
 import { formDate } from "@/lib/utils";
 import * as xlsx from "xlsx";
 
 export async function GET(req: Request, res: Response) {
+	req.json;
 	const date = formDate(new Date());
 
 	try {

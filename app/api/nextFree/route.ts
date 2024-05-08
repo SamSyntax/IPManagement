@@ -60,8 +60,9 @@ export async function POST(req: Request) {
 						updatedAt: new Date(),
 						action: {
 							create: {
-								actionType: `Removing address from ${body.simsId}`,
+								message: `Removing address from ${body.simsId}`,
 								userId: user.id!,
+								actionType: "MODIFY",
 								agentId: agentId!,
 							},
 						},
@@ -78,9 +79,9 @@ export async function POST(req: Request) {
 					updatedAt: new Date(),
 					action: {
 						create: {
-							actionType: `Assigning new address to ${body.simsId}`,
+							message: `Assigning a new address to ${body.simsId}`,
 							addressId: freeIp.id!,
-
+							actionType: "MODIFY",
 							agentId: agentId!,
 						},
 					},

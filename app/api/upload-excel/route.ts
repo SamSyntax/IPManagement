@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -9,6 +10,8 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: Request, res: NextResponse) {
+	const session = await auth();
+
 	try {
 		const data = await req.json();
 		const validationResults = data.map((entry: any) =>
@@ -47,6 +50,14 @@ export async function POST(req: Request, res: NextResponse) {
 				skipDuplicates: true,
 			});
 			addedAddresses.push(...newAddresses.map((entry: any) => entry.address));
+
+			await prisma.action.create({
+				data: {
+					agentId: session?.user.id!,
+					message: "Uploading addresses to the database",
+					actionType: "CREATE",
+				},
+			});
 		}
 
 		if (addedAddresses.length === 0) {

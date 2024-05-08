@@ -71,7 +71,8 @@ export async function POST(req: Request) {
 				},
 				action: {
 					create: {
-						actionType: `Assigning ${freeIp.address} to ${user.simsId}`,
+						message: `Assigning ${freeIp.address} to ${user.simsId}`,
+						actionType: "MODIFY",
 						agentId: agentId!,
 						userId: user.id,
 					},

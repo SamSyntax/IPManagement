@@ -2,26 +2,10 @@ import { getActionByAgentId } from "@/actions/data/user";
 import { auth } from "@/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { formDate } from "@/lib/utils";
 import { Role } from "@prisma/client";
-import {
-  Calendar,
-  CalendarCheck,
-  Fingerprint,
-  FolderOutput,
-  Mail,
-  NetworkIcon,
-  Workflow,
-} from "lucide-react";
+import { CalendarCheck, Fingerprint, Mail, Workflow } from "lucide-react";
+import { columns } from "../agent/_datatable/column";
+import { DataTable } from "../agent/_datatable/data-table";
 import TempModify from "./TempMofify";
 
 interface Props {
@@ -108,7 +92,7 @@ const Profile = async ({
         {/* Top Right Parent */}
         <div className=" flex items flex-1 items-start justify-start"></div>
       </div>
-      <div className="w-[90vw] h-[49.5vh]">
+      {/* <div className="w-[90vw] h-[49.5vh]">
         <ScrollArea className="h-full w-[90vw]">
           {actions.length < 1 ? (
             <div className="w-[90vw] h-[50vh] flex items-center justify-center text-muted-foreground">
@@ -171,7 +155,8 @@ const Profile = async ({
             </Table>
           )}
         </ScrollArea>
-      </div>
+      </div> */}
+      <DataTable columns={columns} data={[]} />
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { User } from "@prisma/client";
 import { NextResponse } from "next/server";
@@ -10,6 +11,8 @@ const userInputSchema = z.object({
 });
 
 export async function POST(req: Request) {
+	const session = await auth();
+
 	try {
 		const body = await req.json();
 
@@ -59,6 +62,14 @@ export async function POST(req: Request) {
 					data: {
 						isTaken: false,
 						updatedAt: new Date(),
+						action: {
+							create: {
+								actionType: "DELETE",
+								agentId: session?.user.id!,
+								userId: user.id,
+								message: `Deleting ${user.simsId} from the database.`,
+							},
+						},
 					},
 				});
 			}

@@ -1,8 +1,11 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
 	const body = await req.json();
+
+	const session = await auth();
 
 	try {
 		const user = await prisma.user.findFirst({
@@ -47,6 +50,14 @@ export async function POST(req: Request) {
 				ipAddressId: null,
 				address: null,
 				updatedAt: new Date(),
+				action: {
+					create: {
+						actionType: "MODIFY",
+						agentId: session?.user.id!,
+						message: `Removing ${ipAddress.address} from ${user.simsId}`,
+						addressId: ipAddress.id,
+					},
+				},
 			},
 		});
 

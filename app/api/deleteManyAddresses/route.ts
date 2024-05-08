@@ -61,9 +61,10 @@ export async function POST(req: Request) {
 						updatedAt: new Date(),
 						action: {
 							create: {
-								actionType: `Removing ${address.address} from ${address.simsId} and deleting it (BULK OPERATION)`,
+								message: `Removing ${address.address} from ${address.simsId} and deleting it (BULK OPERATION)`,
 								addressId: address.id,
 								agentId: session?.user.id!,
+								actionType: "DELETE",
 							},
 						},
 					},
@@ -82,8 +83,9 @@ export async function POST(req: Request) {
 		}
 		await prisma.action.create({
 			data: {
-				actionType: `Removing ${deletedIPs.length} IP Addresses from database`,
+				message: `Removing ${deletedIPs.length} IP Addresses from database`,
 				agentId: session?.user.id!,
+				actionType: "DELETE",
 			},
 		});
 		if (deletedIPs.length === 0) {

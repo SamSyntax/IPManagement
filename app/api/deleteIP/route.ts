@@ -34,9 +34,10 @@ export async function POST(req: Request) {
 					updatedAt: new Date(),
 					action: {
 						create: {
-							actionType: `Removing ${ip.address} from ${ip.simsId}`,
+							message: `Removing ${ip.address} from ${ip.simsId}`,
 							addressId: ip.id,
 							agentId: session?.user.id!,
+							actionType: "MODIFY",
 						},
 					},
 				},

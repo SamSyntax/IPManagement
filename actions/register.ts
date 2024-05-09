@@ -90,9 +90,11 @@ export const modifyAgent = async (
 
 		await prisma.action.create({
 			data: {
-				actionType: `Modyfing agent ${agent.name} ${" "} ${agent.surname}, ${
+				message: `Modyfing agent ${agent.name} ${" "} ${agent.surname}, ${
 					agent.simsId
 				}`,
+				actionType: "CREATE",
+
 				agentId: requestorAgent.id,
 			},
 		});

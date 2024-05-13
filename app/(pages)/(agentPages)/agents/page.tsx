@@ -19,8 +19,7 @@ const page = async () => {
     return <Unathorized />;
   }
 
-  const len = agents.length;
-  console.log(len);
+
 
   return (
     <div className="w-[90vw] h-screen  flex flex-col items-center justify-start overflow-y-visible">
@@ -28,22 +27,17 @@ const page = async () => {
         <SheetIcon size={40} />
         <h1 className="text-3xl font-bold">List of Agents</h1>
       </div>
-
       <div
         className={
-          len < 4
-            ? `grid grid-cols-${len} gap-4 overflow-y-visible p-12  `
-            : `grid grid-cols-4  gap-4 overflow-y-visible p-12 w-full`
+          session.user.role === "USER_ADMIN" ||
+          session.user.role === "GLOBAL_ADMIN"
+            ? `col-span-full flex items-center justify-start w-full p-4`
+            : "hidden"
         }>
-        <div
-          className={
-            session.user.role === "USER_ADMIN" ||
-            session.user.role === "GLOBAL_ADMIN"
-              ? `col-span-full flex items-center justify-start`
-              : "hidden"
-          }>
-          <RegisterAgent creatorRole={session.user.role} />
-        </div>
+        <RegisterAgent creatorRole={session.user.role} />
+      </div>
+      <div
+        className={`grid sm:gird-cols-1 md:grid-cols-3 xxl:grid-cols-4 gap-4 overflow-y-visible p-12`}>
         {[...agents].map((agent) => {
           return (
             <div

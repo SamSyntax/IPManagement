@@ -32,6 +32,9 @@ export async function POST(req: Request) {
 				where: {
 					simsId: body.simsId,
 				},
+				include: {
+					ipAddress: true,
+				},
 			}),
 			prisma.iPAddress.findFirst({
 				where: {
@@ -49,7 +52,7 @@ export async function POST(req: Request) {
 				transactionPromises.push(
 					prisma.iPAddress.update({
 						where: {
-							id: user.ipAddressId,
+							id: user.ipAddress?.id,
 						},
 						data: {
 							isTaken: false,

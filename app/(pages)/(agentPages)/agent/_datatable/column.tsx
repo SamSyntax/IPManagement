@@ -61,7 +61,7 @@ export const columns: ColumnDef<Action>[] = [
     },
   },
   {
-    accessorKey: "user.address",
+    accessorKey: "ipAddress.address",
     header: ({ column }) => {
       return (
         <Button

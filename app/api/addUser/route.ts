@@ -29,7 +29,6 @@ export async function POST(req: Request) {
 
 		const agentId = session?.user.id;
 
-		console.log(agentId);
 
 		if (!validation.success) {
 			return NextResponse.json(
@@ -82,7 +81,8 @@ export async function POST(req: Request) {
 					updatedAt: new Date(),
 					action: {
 						create: {
-							actionType: `Updating user ${body.simsId}`,
+							message: `Updating user ${body.simsId}`,
+							actionType: "MODIFY",
 							addressId: ipAddress?.id!,
 							agentId: agentId!,
 						},
@@ -109,7 +109,8 @@ export async function POST(req: Request) {
 					address: ipAddress.address,
 					action: {
 						create: {
-							actionType: `Creating user ${body.simsId}`,
+							actionType: "CREATE",
+							message: `Creating user ${body.simsId}`,
 							addressId: ipAddress.id,
 							agentId: agentId!,
 						},
@@ -135,7 +136,8 @@ export async function POST(req: Request) {
 			},
 		});
 
-		revalidatePath;
+		revalidatePath("/users");
+		revalidatePath("/addresses");
 
 		return NextResponse.json(
 			{

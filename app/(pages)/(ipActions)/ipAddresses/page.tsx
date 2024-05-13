@@ -7,7 +7,7 @@ const Home = () => {
         <Search
           filterTarget="address"
           filterPlaceholder="Search for Address..."
-          endpoint="api/assignIp"
+          endpoint="/api/assignIp"
           cols="ip"
         />
       </div>

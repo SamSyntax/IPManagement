@@ -1,19 +1,12 @@
 import { getActionByAgentId } from "@/actions/data/user";
+import { auth } from "@/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { formDate } from "@/lib/utils";
 import { Role } from "@prisma/client";
-import { CalendarCheck, Mail, UserCircle } from "lucide-react";
-import { revalidatePath } from "next/cache";
+import { CalendarCheck, Fingerprint, Mail, Workflow } from "lucide-react";
+import { columns } from "../agent/_datatable/column";
+import { DataTable } from "../agent/_datatable/data-table";
+import TempModify from "./TempMofify";
 
 interface Props {
   name: string;
@@ -34,71 +27,110 @@ const Profile = async ({
   id,
   email,
 }: Props) => {
-  const fetchActions = async () => await getActionByAgentId(id);
-  fetchActions();
-  revalidatePath;
-
-  const actions: any = await fetchActions();
+  const actions: any[] = await getActionByAgentId(id);
+  const session = await auth();
+  let agent = session?.user;
 
   return (
-    <div className=" w-[90vw] border border-muted flex flex-col h-screen  ">
-      <div className="flex-1 h-[50vh] border-b border-muted p-8  ">
-        <div className="flex flex-col items-start gap-10 justify-center">
-          <div className="flex gap-4 items-center ">
-            <div className="flex">
-              <Avatar className="w-24 h-24">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@dbschenker"
-                />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
+    <div className=" w-[90vw] border border-muted flex flex-col justify-start h-full overflow-hidden  ">
+      <div className=" border-b border-muted p-8  flex  h-[50vh]">
+        <div className="flex flex-col items-start justify-start flex-1 h">
+          <div className="h-full flex flex-col items-baseline justify-start gap-10">
+            <div className="flex gap-4 items-center ">
+              <div className="flex ">
+                <Avatar className="w-24 h-24">
+                  <AvatarImage
+                    src="https://github.com/shadcn.png"
+                    alt="@dbschenker"
+                  />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="flex flex-col gap-2 ">
+                <h1 className="text-2xl font-bold">
+                  {name} {surname}
+                </h1>
+                <div className="flex gap-2">
+                  <Badge
+                    className="flex items-center justify-center p-2 rounded-sm max-w-[150px]"
+                    variant={"outline"}>
+                    {role}
+                  </Badge>
+                  <TempModify
+                    id={id}
+                    email={email}
+                    name={name}
+                    role={role}
+                    simsId={simsId}
+                    surname={surname}
+                    agent={agent}
+                  />
+                </div>
+                <h1 className="text-muted-foreground">ID: {id}</h1>
+              </div>
             </div>
-            <div className="flex flex-col gap-2">
-              <h1 className="text-2xl font-bold">
-                {name} {surname}
-              </h1>
-              <Badge
-                className="flex items-center justify-center p-2 rounded-sm"
-                variant={"outline"}>
-                {role}
-              </Badge>
+            <div className="flex flex-col items-start justify-center gap-2 text-sm text-muted-foreground ">
+              <div className="flex gap-2 items-center justify-center">
+                <Mail size={18} />
+                <p className=" font-bold">{email}</p>
+              </div>
+              <div className="flex gap-2 items-center justify-center">
+                <Fingerprint size={18} />
+                <p className=" font-bold">{simsId}</p>
+              </div>
+              <div className="flex gap-2 items-center justify-center">
+                <CalendarCheck size={18} />
+                <p className="  font-bold">{createdAt}</p>
+              </div>
+              <div className="flex gap-2 items-center justify-center">
+                <Workflow size={18} />
+                <p className="  font-bold">{actions.length}</p>
+              </div>
             </div>
-          </div>
-          <div className="flex gap-2 items-center justify-center">
-            <Mail />
-            <p className="text-lg text-muted-foreground font-bold">{email}</p>
-          </div>
-          <div className="flex gap-2 items-center justify-center">
-            <UserCircle />
-            <p className="text-lg text-muted-foreground font-bold">{simsId}</p>
-          </div>
-          <div className="flex gap-2 items-center justify-center">
-            <CalendarCheck />
-            <p className="text-lg text-muted-foreground font-bold">
-              {createdAt}
-            </p>
           </div>
         </div>
+
+        {/* Top Right Parent */}
+        <div className=" flex items flex-1 items-start justify-start"></div>
       </div>
-      <div className="h-[50vh] w-[90vw] flex-1 ">
-        <ScrollArea className="h-[50vh] w-[90vw]">
+      {/* <div className="w-[90vw] h-[49.5vh]">
+        <ScrollArea className="h-full w-[90vw]">
           {actions.length < 1 ? (
-            <div className="w-[90vw] h-[50vh] flex items-center justify-center">
+            <div className="w-[90vw] h-[50vh] flex items-center justify-center text-muted-foreground">
               <h1 className="text-xl font-medium">No actions found!</h1>
             </div>
           ) : (
             <Table>
-              <TableHeader className="h-16">
+              <TableHeader>
                 <TableRow>
-                  <TableHead>Action Type</TableHead>
-                  <TableHead>IP Address</TableHead>
-                  <TableHead>User SIMSID</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>
+                    <div className="flex items-center justify-start gap-2">
+                      <FolderOutput size={18} />
+                      <p>Action Type</p>
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex items-center justify-start gap-2">
+                      <NetworkIcon size={18} />
+                      <p>Address</p>
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex items-center justify-start gap-2">
+                      <Fingerprint size={18} />
+                      <p>SIMSID</p>
+                    </div>
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex items-center justify-start gap-2">
+                      <Calendar size={18} />
+                      <p>Date</p>
+                    </div>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
-                {actions!.map((action: any) => {
+              <TableBody className="text-muted-foreground">
+                {actions.map((action) => {
                   return (
                     <TableRow key={action.id} className="">
                       <TableCell className="text-wrap p-4">
@@ -110,8 +142,8 @@ const Profile = async ({
                           : "No IP Address ID"}
                       </TableCell>
                       <TableCell className="text-wrap p-4">
-                        {action.agent.simsId
-                          ? action.agent.simsId
+                        {action.user?.simsId
+                          ? action.user?.simsId
                           : "No user ID"}
                       </TableCell>
                       <TableCell className="text-wrap p-4">
@@ -124,7 +156,8 @@ const Profile = async ({
             </Table>
           )}
         </ScrollArea>
-      </div>
+      </div> */}
+      <DataTable columns={columns} data={[]} />
     </div>
   );
 };

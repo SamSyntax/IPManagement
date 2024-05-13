@@ -1,6 +1,6 @@
-import { type ClassValue, clsx } from "clsx";
+import { clsx, type ClassValue } from "clsx";
 import { SessionOptions } from "iron-session";
-import { EarthLock, Upload, UserCog, UsersRound } from "lucide-react";
+import { EarthLock, UploadCloud, UserCog, UsersRound } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import * as xlsx from "xlsx";
 export function cn(...inputs: ClassValue[]) {
@@ -18,14 +18,14 @@ export const Links = [
 	{
 		label: "Agents",
 		href: "/agents",
-		accessLevel: "USER_ADMIN",
+		accessLevel: "AGENT",
 		icon: () => UserCog,
 	},
 	{
-		label: "Add addresses",
+		label: "Upload",
 		href: "/uploadExcel",
 		accessLevel: "GLOBAL_ADMIN",
-		icon: () => Upload,
+		icon: () => UploadCloud,
 	},
 ];
 
@@ -65,6 +65,7 @@ export const sessionOptions: SessionOptions = {
 	cookieName: "ip-management-schenker-session",
 	cookieOptions: {
 		httpOnly: true,
+		expires: new Date(Date.now()),
 		secure: process.env.NODE_ENV === "production",
 	},
 };

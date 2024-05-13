@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -9,6 +10,8 @@ const userInputSchema = z.object({
 });
 
 export async function POST(req: Request) {
+	const session = await auth();
+
 	try {
 		// Znajdź adres IP przypisany do usuniętego użytkownika i ustaw isTaken na false
 
@@ -45,6 +48,14 @@ export async function POST(req: Request) {
 				data: {
 					isTaken: false,
 					updatedAt: new Date(),
+					action: {
+						create: {
+							actionType: "DELETE",
+							message: `Deleting ${user.simsId} from the database.`,
+							agentId: session?.user.id!,
+							userId: user.id,
+						},
+					},
 				},
 			});
 		}

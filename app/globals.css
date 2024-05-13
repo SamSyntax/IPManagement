@@ -58,6 +58,11 @@
   }
 }
 
+[aria-disabled="true"] {
+  pointer-events: none;
+  opacity: 50%
+}
+
 
 
 

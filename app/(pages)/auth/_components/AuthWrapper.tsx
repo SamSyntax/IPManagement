@@ -1,14 +1,13 @@
 "use client";
 
-import Image from "next/image";
+import { ModeToggle } from "@/components/nav/theme-toggle";
 import Logo from "@/public/images/schenker_logo.svg";
 import LogoLight from "@/public/images/schenker_logo_light.svg";
-import { ModeToggle } from "@/components/nav/theme-toggle";
+import Image from "next/image";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Login from "./forms/Login";
 import { useTheme } from "next-themes";
-import Register from "./forms/Register";
+import Login from "./forms/Login";
 
 const AuthWrapper = ({ ...props }) => {
   const { theme, systemTheme } = useTheme();
@@ -29,21 +28,15 @@ const AuthWrapper = ({ ...props }) => {
               )}
             </div>
             <div className="w-[400px] flex flex-col items-center justify-center">
-              <TabsList className="w-full">
-                <TabsTrigger className="w-full" value="SignIn">
+              <TabsList className="w-full !bg-card  border border-muted">
+                <TabsTrigger className="w-full !bg-transparent" value="SignIn">
                   Sign In
-                </TabsTrigger>
-                <TabsTrigger className="w-full" value="SignUp">
-                  Sign Up
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="SignIn">
                 <div className="flex items-center justify-center">
                   <Login />
                 </div>
-              </TabsContent>
-              <TabsContent value="SignUp">
-                <Register />
               </TabsContent>
             </div>
           </div>

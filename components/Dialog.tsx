@@ -1,4 +1,4 @@
-import React from "react";
+import { parseData } from "./data-table";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,12 +10,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
-import { parseData } from "./data-table";
 
-import { toast } from "./ui/use-toast";
-import axios from "axios";
 import { useGlobalState } from "@/providers/global-state";
+import axios from "axios";
 import { ScrollArea } from "./ui/scroll-area";
+import { toast } from "./ui/use-toast";
 
 interface Props {
   simsId?: string;
@@ -39,6 +38,7 @@ const Dialog = ({
   action,
   target,
   region,
+  func,
   ipType,
 }: Props) => {
   const simsIds: string[] = [];
@@ -165,7 +165,6 @@ const Dialog = ({
         title: "New IP Address has been assigned!",
         description: `${response.data.message}`,
       });
-
     } catch (error: any) {
       toast({
         title: "Ughh, something went wrong!",
@@ -178,7 +177,7 @@ const Dialog = ({
   };
 
   return (
-    <div>
+    <>
       <AlertDialog>
         {action === "delete" ? (
           <AlertDialogTrigger className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none text-red-600      transition-colors focus:bg-accent hover:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
@@ -197,9 +196,12 @@ const Dialog = ({
                 <AlertDialogDescription>
                   This action cannot be undone. This will permanently delete
                   user(s): <b>{bulk ? simsIds.join(", ") : simsId}</b> from our
-                  VPN database and release IP Address: <b>{ips.join(", ")}</b>.
+                  VPN database.
                 </AlertDialogDescription>
-              ) : action === "delete" && type === "ips" && !bulk ? (
+              ) : action === "delete" &&
+                type === "ips" &&
+                !bulk &&
+                target !== "user" ? (
                 <AlertDialogDescription>
                   This action cannot be undone. This will delete IP Address:{" "}
                   <b>{ip}</b> from our database.
@@ -217,10 +219,19 @@ const Dialog = ({
                   This action will assign next free <b>{ipType}</b> IP Address
                   from region <b>{region}</b> to <b>{simsId}</b>
                 </AlertDialogDescription>
+              ) : action === "delete" &&
+                type === "ips" &&
+                !bulk &&
+                target === "user" ? (
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  user(s): <b>{bulk ? simsIds.join(", ") : simsId}</b> from our
+                  VPN database.
+                </AlertDialogDescription>
               ) : (
                 <AlertDialogDescription>
-                  This action cannot be undone. This will release IP Address:{" "}
-                  <b>{ip}</b>
+                  This action cannot be undonesdasdas. This will release IP
+                  Address: <b>{ip}</b>
                 </AlertDialogDescription>
               )}
             </ScrollArea>
@@ -233,7 +244,10 @@ const Dialog = ({
                   ? handleDeleteManyUsers
                   : action === "release" && type === "users"
                   ? handleRelease
-                  : action === "delete" && type === "ips" && !bulk
+                  : action === "delete" &&
+                    type === "ips" &&
+                    !bulk &&
+                    target !== "user"
                   ? handleDeleteIP
                   : action === "delete" && type === "ips" && target === "ip"
                   ? handleDeleteManyIPs
@@ -242,15 +256,19 @@ const Dialog = ({
                     type === "users" &&
                     target === "user"
                   ? handleAssignNext
+                  : action === "delete" &&
+                    type === "ips" &&
+                    !bulk &&
+                    target === "user"
+                  ? handleDeleteManyUsers
                   : handleRelease
-              }
-            >
+              }>
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </>
   );
 };
 

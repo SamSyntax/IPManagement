@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/db";
-import { revalidatePath } from "next/cache";
 
 export const getUserByEmail = async (email: string) => {
 	try {
@@ -57,7 +56,50 @@ export async function getActionByAgentId(id: string) {
 			},
 		});
 
-		revalidatePath;
+		return action;
+	} catch (error) {
+		throw new Error("Failed to fetch actions");
+	}
+}
+
+export async function getActionByAddressId(id: string) {
+	try {
+		const action = await prisma.action.findMany({
+			where: {
+				addressId: id,
+			},
+			include: {
+				agent: true,
+				ipAddress: true,
+				user: true,
+			},
+			orderBy: {
+				createdAt: "desc",
+			},
+		});
+
+		return action;
+	} catch (error) {
+		throw new Error("Failed to fetch actions");
+	}
+}
+
+export async function getActionByUserId(id: string) {
+	try {
+		const action = await prisma.action.findMany({
+			where: {
+				userId: id,
+			},
+			include: {
+				agent: true,
+				ipAddress: true,
+				user: true,
+			},
+			orderBy: {
+				createdAt: "desc",
+			},
+		});
+
 		return action;
 	} catch (error) {
 		throw new Error("Failed to fetch actions");

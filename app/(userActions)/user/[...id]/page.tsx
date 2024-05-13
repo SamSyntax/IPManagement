@@ -25,7 +25,6 @@ const page = async ({ params }: Props) => {
 
   const session = await auth();
 
-  console.log(user);
 
   if (!session) {
     redirect("auth/login");

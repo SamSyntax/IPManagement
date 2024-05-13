@@ -28,7 +28,6 @@ const DeleteBtn = ({ id, session, simsId }: Props) => {
   const delAgent = async () => {
     try {
       const res = await deleteAgent(id, session);
-      console.log(res);
       toast({
         title: "Agent has been deleted",
         description: `Agent ${simsId} has been deleted successfully.`,

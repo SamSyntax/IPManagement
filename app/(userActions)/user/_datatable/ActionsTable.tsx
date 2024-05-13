@@ -14,8 +14,8 @@ const ActionsTable = ({ id }: { id: string }) => {
     const fetchData = async () => {
       setIsLoading(true); // Set loading state to true
       try {
-        const actions = await axios.post("/api/getAgentActions", {
-          agentId: id.toString(),
+        const actions = await axios.post("/api/getUserActions", {
+          userId: id.toString(),
         });
         setData(actions.data);
       } catch (error) {

@@ -81,7 +81,6 @@ const ModifyProfile = ({
         }
       });
     });
-    console.log(data);
   };
 
   return (

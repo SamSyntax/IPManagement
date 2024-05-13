@@ -177,7 +177,7 @@ const Dialog = ({
   };
 
   return (
-    <div>
+    <>
       <AlertDialog>
         {action === "delete" ? (
           <AlertDialogTrigger className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none text-red-600      transition-colors focus:bg-accent hover:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
@@ -268,7 +268,7 @@ const Dialog = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </>
   );
 };
 

@@ -1,5 +1,7 @@
+import { auth } from "@/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,7 +9,15 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Role } from "@prisma/client";
-import { CalendarCheck, Fingerprint, Link, Mail } from "lucide-react";
+import {
+  CalendarCheck,
+  Fingerprint,
+  Link as LinkIco,
+  Mail,
+} from "lucide-react";
+import Link from "next/link";
+import DeleteBtn from "../agent/_components/DeleteBtn";
+import TempModify from "./TempMofify";
 
 interface Props {
   name: string;
@@ -15,11 +25,20 @@ interface Props {
   simsId: string;
   createdAt: string;
   role: Role;
-  id?: string;
+  id: string;
   email: string;
 }
 //@ts-ignore
-function UserCard({ name, surname, simsId, createdAt, role, id, email }) {
+async function AgentCard({
+  name,
+  surname,
+  simsId,
+  createdAt,
+  role,
+  id,
+  email,
+}: Props) {
+  const session = await auth();
   return (
     <div>
       <Card>
@@ -60,14 +79,29 @@ function UserCard({ name, surname, simsId, createdAt, role, id, email }) {
         <CardFooter className="flex items-center">
           <div className="flex flex-1 items-center justify-start">
             <Badge className="text-muted-foreground" variant="outline">
-              {role}
+              {role === "USER_ADMIN"
+                ? "USER ADMIN"
+                : role === "GLOBAL_ADMIN"
+                ? "GLOBAL ADMIN"
+                : role}
             </Badge>
           </div>
-          <div className="flex flex-1 items-center justify-end">
-            <Link
-              className="hover:text-primary transition-colors ease-in-out duration-300"
-              size={20}
+          <div className="flex flex-1 items-center justify-end gap-2">
+            <TempModify
+              agent={session?.user}
+              email={email}
+              name={name}
+              role={role}
+              simsId={simsId}
+              surname={surname}
+              id={id}
             />
+            <Link href={`/agent/${id}`}>
+              <Button variant={"outline"} size={"icon"}>
+                <LinkIco size={20} />
+              </Button>
+            </Link>
+            <DeleteBtn id={id} session={session!} simsId={simsId} />
           </div>
         </CardFooter>
       </Card>
@@ -75,4 +109,4 @@ function UserCard({ name, surname, simsId, createdAt, role, id, email }) {
   );
 }
 
-export default UserCard;
+export default AgentCard;

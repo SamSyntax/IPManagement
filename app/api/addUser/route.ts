@@ -29,7 +29,6 @@ export async function POST(req: Request) {
 
 		const agentId = session?.user.id;
 
-		console.log(agentId);
 
 		if (!validation.success) {
 			return NextResponse.json(

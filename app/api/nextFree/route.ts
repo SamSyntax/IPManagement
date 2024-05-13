@@ -4,15 +4,11 @@ import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-// Walidacja danych wejściowych za pomocą Zod
-const simsIdSchema = z.string().length(8);
-const regionSchema = z.enum(["EMEA", "APAC", "AMERICAS", "AUSTRALIA"]);
-const typeSchema = z.enum(["P4", "P6"]);
-
+// Validate data with zod
 const userInputSchema = z.object({
-	simsId: simsIdSchema,
-	region: regionSchema,
-	type: typeSchema,
+	simsId: z.string().length(8),
+	region: z.enum(["EMEA", "APAC", "AMERICAS", "AUSTRALIA"]),
+	type: z.enum(["P4", "P6"]),
 });
 
 export async function POST(req: Request) {
@@ -21,87 +17,95 @@ export async function POST(req: Request) {
 		const session = await auth();
 		const agentId = session?.user.id;
 
-		// Sprawdź, czy dane wejściowe są poprawne
+		// Checking input
 		const validation = userInputSchema.safeParse(body);
 
 		if (!validation.success) {
 			return NextResponse.json(
-				{
-					error: `Input data is invalid`,
-				},
+				{ error: "Input data is invalid" },
 				{ status: 400 }
 			);
 		}
 
-		const user = await prisma.user.findFirst({
-			where: {
-				simsId: body.simsId,
-			},
-		});
-
-		const freeIp = await prisma.iPAddress.findFirst({
-			where: {
-				isTaken: false,
-				region: body.region,
-				type: body.type,
-			},
-		});
+		const [user, freeIp] = await Promise.all([
+			prisma.user.findFirst({
+				where: {
+					simsId: body.simsId,
+				},
+			}),
+			prisma.iPAddress.findFirst({
+				where: {
+					isTaken: false,
+					region: body.region,
+					type: body.type,
+				},
+			}),
+		]);
 
 		if (user && freeIp) {
-			// Zwalniamy poprzedni adres IP przypisany do identyfikatora SIM
+			const transactionPromises = [];
+
 			if (user.ipAddressId) {
-				await prisma.iPAddress.update({
-					where: {
-						id: user.ipAddressId,
-					},
+				transactionPromises.push(
+					prisma.iPAddress.update({
+						where: {
+							id: user.ipAddressId,
+						},
+						data: {
+							isTaken: false,
+							simsId: null,
+							updatedAt: new Date(),
+							action: {
+								create: {
+									message: `Removing address from ${body.simsId}`,
+									userId: user.id!,
+									actionType: "MODIFY",
+									agentId: agentId!,
+								},
+							},
+						},
+					})
+				);
+			}
+
+			// Zwalniamy poprzedni adres IP przypisany do identyfikatora SIM
+
+			// Zaktualizujemy dane użytkownika, przypisując mu nowy adres IP
+
+			transactionPromises.push(
+				prisma.user.update({
+					where: { simsId: body.simsId },
 					data: {
-						isTaken: false,
-						simsId: null,
+						ipAddressId: freeIp.id,
+						address: freeIp.address,
 						updatedAt: new Date(),
 						action: {
 							create: {
-								message: `Removing address from ${body.simsId}`,
-								userId: user.id!,
+								message: `Assigning a new address to ${body.simsId}`,
+								addressId: freeIp.id!,
 								actionType: "MODIFY",
 								agentId: agentId!,
 							},
 						},
 					},
-				});
-			}
-
-			// Zaktualizujemy dane użytkownika, przypisując mu nowy adres IP
-			await prisma.user.update({
-				where: { simsId: body.simsId },
-				data: {
-					ipAddressId: freeIp.id,
-					address: freeIp.address,
-					updatedAt: new Date(),
-					action: {
-						create: {
-							message: `Assigning a new address to ${body.simsId}`,
-							addressId: freeIp.id!,
-							actionType: "MODIFY",
-							agentId: agentId!,
-						},
+					include: {
+						ipAddress: true,
 					},
-				},
-				include: {
-					ipAddress: true,
-				},
-			});
+				}),
+				prisma.iPAddress.update({
+					where: {
+						id: freeIp.id,
+					},
+					data: {
+						isTaken: true,
+						simsId: body.simsId,
+						updatedAt: new Date(),
+					},
+				})
+			);
 
-			// Przypisujemy nowy adres IP do identyfikatora SIM
-			await prisma.iPAddress.update({
-				where: {
-					id: freeIp.id,
-				},
-				data: {
-					isTaken: true,
-					simsId: body.simsId,
-					updatedAt: new Date(),
-				},
-			});
+			await prisma.$transaction(transactionPromises);
+
 			revalidatePath("/users");
 			revalidatePath("/addresses");
 

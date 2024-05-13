@@ -30,7 +30,6 @@ const Search = ({ endpoint, cols, filterTarget, filterPlaceholder }: Props) => {
     try {
       const res = await axios.get(endpoint);
       setSearchUsers(res.data);
-      console.log(searchUsers);
       return res.data;
     } catch (error) {
       throw new Error("Failed to fetch users");

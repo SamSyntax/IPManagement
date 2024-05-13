@@ -12,6 +12,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -22,7 +29,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { ModifySchema } from "@/lib/schemas/ModifySchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SaveIcon, SettingsIcon } from "lucide-react";
+import { SettingsIcon } from "lucide-react";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -36,9 +43,18 @@ interface Props {
   email: string;
   role: "AGENT" | "USER_ADMIN" | "GLOBAL_ADMIN";
   agent: any;
+  id: string;
 }
 
-const TempModify = ({ name, surname, simsId, email, role, agent }: Props) => {
+const TempModify = ({
+  name,
+  surname,
+  simsId,
+  email,
+  role,
+  agent,
+  id,
+}: Props) => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -59,7 +75,7 @@ const TempModify = ({ name, surname, simsId, email, role, agent }: Props) => {
     setSuccess("");
 
     startTransition(() => {
-      modifyAgent(data, agent).then((data) => {
+      modifyAgent(data, agent, id).then((data) => {
         setError(data.error);
         setSuccess(data.success);
 
@@ -72,8 +88,8 @@ const TempModify = ({ name, surname, simsId, email, role, agent }: Props) => {
         }
         if (data.success) {
           toast({
-            title: "Success",
-            description: `User registered successfully ${data.success}`,
+            title: "Success!",
+            description: `Agent modified successfully 😎`,
           });
         }
       });
@@ -86,7 +102,7 @@ const TempModify = ({ name, surname, simsId, email, role, agent }: Props) => {
     <div>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline">
+          <Button variant="outline" size={"icon"}>
             <SettingsIcon size={20} />
           </Button>
         </SheetTrigger>
@@ -104,7 +120,7 @@ const TempModify = ({ name, surname, simsId, email, role, agent }: Props) => {
                   </SheetDescription>
                 </SheetHeader>
                 <SheetDescription className="space-y-2 mt-8">
-                  <div className="space-y-1">
+                  <div className="space-y-4">
                     <div className="grid grid-cols-2 grid-rows-1 gap-4">
                       <FormField
                         control={form.control}
@@ -181,35 +197,40 @@ const TempModify = ({ name, surname, simsId, email, role, agent }: Props) => {
                       )}
                     />
 
-                    <label htmlFor="role">Role</label>
-                    <div className="flex flex-wrap gap-4">
-                      <label className="flex gap-1">
-                        <input
-                          type="radio"
-                          value="AGENT"
-                          {...form.register("role")}
-                          disabled={isPending}
-                        />
-                        AGENT
-                      </label>
-                      <label className="flex gap-1">
-                        <input
-                          type="radio"
-                          value="USER_ADMIN"
-                          {...form.register("role")}
-                          disabled={isPending}
-                        />
-                        USER_ADMIN
-                      </label>
-                      <label className="flex gap-1">
-                        <input
-                          type="radio"
-                          value="GLOBAL_ADMIN"
-                          {...form.register("role")}
-                          disabled={isPending}
-                        />
-                        GLOBAL_ADMIN
-                      </label>
+                    <div className=" items-start justify-start flex flex-col gap-2">
+                      <FormField
+                        control={form.control}
+                        name="role"
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange}>
+                            <FormControl>
+                              <SelectTrigger
+                                className="flex items-center justify-between border border-muted p-2 w-full text-start rounded-md"
+                                disabled={isPending}>
+                                <SelectValue
+                                  placeholder={
+                                    role === "USER_ADMIN"
+                                      ? "USER ADMIN"
+                                      : role === "GLOBAL_ADMIN"
+                                      ? "GLOBAL ADMIN"
+                                      : role
+                                  }
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="AGENT">AGENT</SelectItem>
+                              <SelectItem value="USER_ADMIN">
+                                USER ADMIN
+                              </SelectItem>
+                              <SelectItem value="GLOBAL_ADMIN">
+                                GLOBAL ADMIN
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+
                       <FormMessage />
                     </div>
                   </div>
@@ -220,7 +241,7 @@ const TempModify = ({ name, surname, simsId, email, role, agent }: Props) => {
                     variant="outline"
                     type="submit"
                     className="flex gap-2">
-                    <SaveIcon size={15} /> Save Changes
+                    Save Changes
                   </Button>
                 </div>
               </div>

@@ -6,13 +6,14 @@ import * as z from "zod";
 import { prisma } from "@/lib/db";
 import { ModifySchema } from "@/lib/schemas/ModifySchema";
 import { RegisterSchema } from "@/lib/schemas/RegisterSchema";
-import { Agent, Role } from "@prisma/client";
+import { Agent, Prisma, Role } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getUserByEmail, getUserBySimsId } from "./data/user";
 
 export const modifyAgent = async (
 	data: z.infer<typeof ModifySchema>,
-	requestor: Agent
+	requestor: Agent,
+	id: string
 ) => {
 	const validation = ModifySchema.safeParse(data);
 
@@ -20,14 +21,13 @@ export const modifyAgent = async (
 		return { error: "Invalid data" };
 	}
 
-	const { email, name, surname, simsId, role } = validation.data;
+	const validatedData: any = validation.data;
 
 	const agent = await prisma.agent.findUnique({
 		where: {
-			simsId: simsId,
+			id: id,
 		},
 	});
-
 	const requestorAgent = await prisma.agent.findUnique({
 		where: {
 			id: requestor.id,
@@ -54,53 +54,64 @@ export const modifyAgent = async (
 		return { error: "You don't have permission to modify agent data." };
 	}
 
-	if (requestor.role !== "GLOBAL_ADMIN" && role === "GLOBAL_ADMIN") {
-		return { error: "You don't have permission to assign GLOBAL_ADMIN role." };
+	if (
+		requestor.role !== "GLOBAL_ADMIN" &&
+		validatedData.role === "GLOBAL_ADMIN"
+	) {
+		return { error: "You don't have permission to assign GLOBAL ADMIN role." };
 	} else if (
 		requestor.role !== "GLOBAL_ADMIN" &&
 		requestor.role !== "USER_ADMIN" &&
-		role === "USER_ADMIN"
+		validatedData.role === "USER_ADMIN"
 	) {
 		return {
-			error: "You don't have permission to assign USER_ADMIN role.",
+			error: "You don't have permission to assign USER ADMIN role.",
 		};
 	} else if (
 		requestor.role !== "GLOBAL_ADMIN" &&
 		agent?.role === "GLOBAL_ADMIN"
 	) {
 		return {
-			error: "You don't have permission to modify GLOBAL_ADMIN profile.",
+			error: "You don't have permission to modify GLOBAL ADMIN profile.",
 		};
 	}
 
+	const updatedFields: Record<string, any> = {};
+	const agentData = agent as Prisma.AgentUncheckedCreateInput;
+	for (const key of Object.keys(validatedData)) {
+		if (
+			validatedData[key] !==
+			agentData[key as keyof Prisma.AgentUncheckedCreateInput]
+		) {
+			updatedFields[key] = validatedData[key];
+		}
+	}
+
 	try {
-		const res = await prisma.agent.update({
-			where: {
-				id: agent?.id,
-			},
+		if (Object.keys(updatedFields).length > 0) {
+			const res = await prisma.agent.update({
+				where: {
+					id: agent?.id,
+				},
 
-			data: {
-				email: email,
-				name: name,
-				surname: surname,
-				simsId: simsId,
-				role: role,
-			},
-		});
+				data: validatedData,
+			});
 
-		await prisma.action.create({
-			data: {
-				message: `Modyfing agent ${agent.name} ${" "} ${agent.surname}, ${
-					agent.simsId
-				}`,
-				actionType: "CREATE",
+			await prisma.action.create({
+				data: {
+					message: `Modyfing agent ${agent.name} ${" "} ${agent.surname}, ${
+						agent.simsId
+					}`,
+					actionType: "MODIFY",
 
-				agentId: requestorAgent.id,
-			},
-		});
-		console.log(res);
-		revalidatePath(`/agent/${agent.id}`);
-		return { success: "Profile modified!" };
+					agentId: requestorAgent.id,
+				},
+			});
+			revalidatePath(`/agent/${agent.id}`);
+			return { success: "Profile modified!" };
+		} else {
+			return { error: "No changes detected." };
+		}
 	} catch (error) {
 		console.error(error);
 		return { error: "Something went wrong" + error };

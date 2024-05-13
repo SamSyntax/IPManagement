@@ -2,10 +2,10 @@
 
 import { deleteManyUsers, deleteUser, releaseIp } from "@/actions/userActions";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, LinkIcon, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
-import { parseData } from "./data-table";
 import Dialog from "./Dialog";
+import { parseData } from "./data-table";
 import AddSheet from "./forms/addSheet";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
@@ -26,6 +26,9 @@ export type Vpn = {
   simsId: string;
   ip: string;
   type: "P4" | "P6";
+  user: {
+    id: string;
+  };
   region: "EMEA" | "APAC" | "AMERICAS" | "AUSTRALIA";
   toggleRowSelection: (simsId: string) => void;
 };
@@ -72,10 +75,11 @@ export const userColumns: ColumnDef<Vpn>[] = [
     },
     cell: ({ row }) => (
       <div className="flex items-center justify-start">
-        <Link href={`/user/${row.original.id}`}>
-          <span className="hover:text-muted-foreground transition-colors ease-in-out duration-300 rounded-md">
-            {row.getValue("simsId")}
-          </span>
+        <Link
+          href={`/user/${row.original.id}`}
+          className="hover:text-muted-foreground transition-colors ease-in-out duration-300 rounded-md flex items-center gap-2">
+          <LinkIcon size={15} />
+          {row.original.simsId}
         </Link>
       </div>
     ),
@@ -95,10 +99,11 @@ export const userColumns: ColumnDef<Vpn>[] = [
     },
     cell: ({ row }) => (
       <div className="flex items-center justify-start">
-        <Link href={`/user/${row.original.ipAddress?.id}`}>
-          <span className="hover:text-muted-foreground transition-colors ease-in-out duration-300 rounded-md">
-            {row.getValue("address")}
-          </span>
+        <Link
+          href={`/ipAddress/${row.original.ipAddress?.id}`}
+          className="hover:text-muted-foreground transition-colors ease-in-out duration-300 rounded-md flex gap-2 items-center">
+          <LinkIcon size={15} />
+          {row.original.address}
         </Link>
       </div>
     ),
@@ -266,12 +271,26 @@ export const ipColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           IP Address
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      console.log(row.original.address);
+      if (row.original.address !== null) {
+        return (
+          <Link
+            className="hover:text-muted-foreground transition-colors ease-in-out duration-300 flex gap-2 items-center"
+            href={`/ipAddress/${row.original.id}`}>
+            <LinkIcon size={15} />
+            {row.original.address}
+          </Link>
+        );
+      } else {
+        return null;
+      }
     },
     enableResizing: true,
   },
@@ -282,8 +301,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           Type
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -299,8 +317,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           Region
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -315,12 +332,27 @@ export const ipColumns: ColumnDef<Vpn>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-start p-1"
-        >
+          className="flex items-center justify-start p-1">
           SIMSID
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
+    },
+
+    cell: ({ row }) => {
+      console.log(row.original);
+      if (row.original.user !== null) {
+        return (
+          <Link
+            className="hover:text-muted-foreground transition-colors ease-in-out duration-300 flex gap-2 items-center"
+            href={`/user/${row.original.user.id}`}>
+            <LinkIcon size={15} />
+            {row.original.simsId}
+          </Link>
+        );
+      } else {
+        return null;
+      }
     },
     sortingFn: "text",
   },
@@ -337,8 +369,7 @@ export const ipColumns: ColumnDef<Vpn>[] = [
                 table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()
                   ? false
                   : true
-              }
-            >
+              }>
               <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>

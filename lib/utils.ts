@@ -65,6 +65,7 @@ export const sessionOptions: SessionOptions = {
 	cookieName: "ip-management-schenker-session",
 	cookieOptions: {
 		httpOnly: true,
+		expires: new Date(Date.now()),
 		secure: process.env.NODE_ENV === "production",
 	},
 };

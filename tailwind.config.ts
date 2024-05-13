@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config = {
 	darkMode: ["class"],
@@ -16,6 +16,22 @@ const config = {
 			screens: {
 				"2xl": "1400px",
 			},
+		},
+		screens: {
+			sm: "640px",
+			// => @media (min-width: 640px) { ... }
+
+			md: "768px",
+			// => @media (min-width: 768px) { ... }
+
+			lg: "1024px",
+			// => @media (min-width: 1024px) { ... }
+
+			xl: "1280px",
+			// => @media (min-width: 1280px) { ... }
+
+			xxl: "3000px",
+			// => @media (min-width: 1536px) { ... }
 		},
 		extend: {
 			colors: {
@@ -77,4 +93,4 @@ const config = {
 	plugins: [require("tailwindcss-animate")],
 } satisfies Config;
 
-export default config
+export default config;

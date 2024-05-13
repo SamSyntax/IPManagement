@@ -34,7 +34,9 @@ export async function POST(req: Request) {
 
 		if (!user) {
 			return NextResponse.json({ error: "User not found" }, { status: 404 });
-		} else if (user.ipAddressId !== null) {
+		}
+
+		if (user.ipAddressId !== null) {
 			return NextResponse.json(
 				{ error: "User already has an IP address" },
 				{ status: 400 }
@@ -56,45 +58,50 @@ export async function POST(req: Request) {
 			);
 		}
 
-		await prisma.iPAddress.update({
-			where: {
-				id: freeIp.id,
-			},
-			data: {
-				isTaken: true,
-				updatedAt: new Date(),
-				user: {
-					connect: {
-						simsId: user.simsId,
-						id: user.id,
+		await prisma.$transaction([
+			prisma.iPAddress.update({
+				where: {
+					id: freeIp.id,
+				},
+				data: {
+					isTaken: true,
+					updatedAt: new Date(),
+					user: {
+						connect: {
+							simsId: user.simsId,
+							id: user.id,
+						},
+					},
+					action: {
+						create: {
+							message: `Assigning ${freeIp.address} to ${user.simsId}`,
+							actionType: "MODIFY",
+							agentId: agentId!,
+							userId: user.id,
+						},
 					},
 				},
-				action: {
-					create: {
-						message: `Assigning ${freeIp.address} to ${user.simsId}`,
-						actionType: "MODIFY",
-						agentId: agentId!,
-						userId: user.id,
-					},
+			}),
+			prisma.user.update({
+				where: {
+					id: user.id,
 				},
-			},
-		});
+				data: {
+					ipAddressId: freeIp.id,
+					updatedAt: new Date(),
+				},
+			}),
+		]);
 
-		await prisma.user.update({
-			where: {
-				id: user.id,
-			},
-			data: {
-				ipAddressId: freeIp.id,
-				updatedAt: new Date(),
-			},
-		});
+
 
 		return NextResponse.json({
 			message: `IP Address ${freeIp.address} has been assigned to ${user.simsId}`,
 		});
 	} catch (error) {
 		return NextResponse.json({ error: error }, { status: 500 });
+	} finally {
+		prisma.$disconnect()
 	}
 }
 
@@ -104,6 +111,9 @@ export async function GET(req: Request, res: Response) {
 		const ips = await prisma.iPAddress.findMany({
 			orderBy: {
 				simsId: "asc",
+			},
+			include: {
+				user: true,
 			},
 		});
 		res.ok;

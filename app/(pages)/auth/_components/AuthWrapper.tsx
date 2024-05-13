@@ -28,8 +28,8 @@ const AuthWrapper = ({ ...props }) => {
               )}
             </div>
             <div className="w-[400px] flex flex-col items-center justify-center">
-              <TabsList className="w-full">
-                <TabsTrigger className="w-full" value="SignIn">
+              <TabsList className="w-full !bg-card  border border-muted">
+                <TabsTrigger className="w-full !bg-transparent" value="SignIn">
                   Sign In
                 </TabsTrigger>
               </TabsList>

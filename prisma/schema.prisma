@@ -55,8 +55,8 @@ model Agent {
 
 model Action {
   id         String    @id @unique @default(cuid())
-  agent      Agent     @relation(fields: [agentId], references: [id])
-  agentId    String    
+  agent      Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  agentId    String
   ipAddress  IPAddress? @relation(fields: [addressId], references: [id])
   addressId  String?
   user       User?      @relation(fields: [userId], references: [id])

@@ -12,6 +12,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -49,7 +56,7 @@ const RegisterAgent = ({ creatorRole }: Props) => {
       name: "",
       surname: "",
       email: "",
-      role: "GLOBAL_ADMIN",
+      role: "AGENT",
     },
   });
 
@@ -93,14 +100,14 @@ const RegisterAgent = ({ creatorRole }: Props) => {
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div>
                 <SheetHeader>
-                  <SheetTitle>Sign Up</SheetTitle>
+                  <SheetTitle>Register Agent</SheetTitle>
                   <SheetDescription>
-                    Make changes to the VPN IP Addresses database. Click{" "}
-                    <b>Login</b> when you enter your credentials.
+                    Create an account for the agent. Enter the required data and
+                    select a role.
                   </SheetDescription>
                 </SheetHeader>
-                <SheetDescription className="space-y-2">
-                  <div className="space-y-1">
+                <SheetDescription className="space-y-2 mt-4">
+                  <div className="space-y-4">
                     <div className="grid grid-cols-2 grid-rows-1 gap-4">
                       <FormField
                         control={form.control}
@@ -177,35 +184,33 @@ const RegisterAgent = ({ creatorRole }: Props) => {
                       )}
                     />
 
-                    <label htmlFor="role">Role</label>
-                    <div className="flex flex-wrap gap-4">
-                      <label className="flex gap-1">
-                        <input
-                          type="radio"
-                          value="AGENT"
-                          {...form.register("role")}
-                          disabled={isPending}
-                        />
-                        AGENT
-                      </label>
-                      <label className="flex gap-1">
-                        <input
-                          type="radio"
-                          value="USER_ADMIN"
-                          {...form.register("role")}
-                          disabled={isPending}
-                        />
-                        USER_ADMIN
-                      </label>
-                      <label className="flex gap-1">
-                        <input
-                          type="radio"
-                          value="GLOBAL_ADMIN"
-                          {...form.register("role")}
-                          disabled={isPending}
-                        />
-                        GLOBAL_ADMIN
-                      </label>
+                    <div className=" items-start justify-start flex flex-col gap-2 my-2">
+                      <Label>Role</Label>
+                      <FormField
+                        control={form.control}
+                        name="role"
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange}>
+                            <FormControl>
+                              <SelectTrigger
+                                className="flex items-center justify-between border border-muted p-2 w-full text-start rounded-md"
+                                disabled={isPending}>
+                                <SelectValue placeholder="Select a role" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="AGENT">AGENT</SelectItem>
+                              <SelectItem value="USER_ADMIN">
+                                USER ADMIN
+                              </SelectItem>
+                              <SelectItem value="GLOBAL_ADMIN">
+                                GLOBAL ADMIN
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+
                       <FormMessage />
                     </div>
                   </div>

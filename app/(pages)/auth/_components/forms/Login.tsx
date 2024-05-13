@@ -7,14 +7,7 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import * as z from "zod";
-import { useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -22,17 +15,20 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { EyeIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
-import { FormError } from "../form-error";
 import { login } from "@/actions/login";
 import { LoginSchema } from "@/lib/schemas/LoginSchema";
-import { useToast } from "@/components/ui/use-toast";
+import { FormError } from "../form-error";
 
 const AuthWrapper = ({ ...props }) => {
-  const { toast } = useToast();
   const [error, setError] = useState<string | undefined>("");
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
@@ -65,11 +61,9 @@ const AuthWrapper = ({ ...props }) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 w-[400px]"
-          >
+            className="space-y-6 w-[400px]">
             <Card className="w-[400px]">
               <CardHeader>
-                <CardTitle>Sign In</CardTitle>
                 <CardDescription>
                   Make changes to the VPN IP Addresses database. Click{" "}
                   <b>Login</b> when you enter your credentials.
@@ -118,8 +112,7 @@ const AuthWrapper = ({ ...props }) => {
                               variant="ghost"
                               type="button"
                               disabled={isPending}
-                              onClick={() => setIsVisible(!isVisible)}
-                            >
+                              onClick={() => setIsVisible(!isVisible)}>
                               {isVisible ? <EyeIcon /> : <EyeClosedIcon />}
                             </Button>
                           </div>
@@ -136,8 +129,7 @@ const AuthWrapper = ({ ...props }) => {
                   onSubmit={() => setIsVisible(false)}
                   disabled={isPending}
                   variant="outline"
-                  type="submit"
-                >
+                  type="submit">
                   Login
                 </Button>
               </CardFooter>

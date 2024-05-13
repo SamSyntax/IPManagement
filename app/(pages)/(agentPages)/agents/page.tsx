@@ -37,8 +37,8 @@ const page = async () => {
         <RegisterAgent creatorRole={session.user.role} />
       </div>
       <div
-        className={`grid sm:gird-cols-1 md:grid-cols-3 xxl:grid-cols-4 gap-4 overflow-y-visible p-12`}>
-        {[...agents].map((agent) => {
+        className={`grid sm:gird-cols-1 md:grid-cols-3 xxl:grid-cols-6 gap-4 overflow-y-visible p-12`}>
+        {agents.map((agent) => {
           return (
             <div
               key={agent.id}

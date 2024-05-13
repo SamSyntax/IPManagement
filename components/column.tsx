@@ -278,7 +278,6 @@ export const ipColumns: ColumnDef<Vpn>[] = [
       );
     },
     cell: ({ row }) => {
-      console.log(row.original.address);
       if (row.original.address !== null) {
         return (
           <Link
@@ -340,7 +339,6 @@ export const ipColumns: ColumnDef<Vpn>[] = [
     },
 
     cell: ({ row }) => {
-      console.log(row.original);
       if (row.original.user !== null) {
         return (
           <Link

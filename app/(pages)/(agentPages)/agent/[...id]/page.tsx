@@ -63,7 +63,11 @@ const page = async ({ params }: Props) => {
                     surname={user!.surname}
                     agent={session?.user}
                   />
-                  <DeleteBtn id={params.id.toString()} session={session} />
+                  <DeleteBtn
+                    id={params.id.toString()}
+                    session={session}
+                    simsId={user.simsId}
+                  />
                 </div>
                 <h1 className="text-muted-foreground">ID: {user!.id}</h1>
               </div>

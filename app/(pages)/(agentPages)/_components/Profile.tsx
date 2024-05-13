@@ -57,6 +57,7 @@ const Profile = async ({
                     {role}
                   </Badge>
                   <TempModify
+                    id={id}
                     email={email}
                     name={name}
                     role={role}

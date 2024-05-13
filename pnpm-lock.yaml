@@ -9,10 +9,10 @@ importers:
   .:
     dependencies:
       '@auth/core':
-        specifier: ^0.30.0
-        version: 0.30.0
+        specifier: ^0.28.0
+        version: 0.28.0
       '@auth/prisma-adapter':
-        specifier: ^2.0.0
+        specifier: ^2.1.0
         version: 2.1.0(@prisma/client@5.11.0(prisma@5.13.0))
       '@hookform/resolvers':
         specifier: ^3.3.4
@@ -60,7 +60,7 @@ importers:
         specifier: ^1.1.5
         version: 1.1.5(@types/react-dom@18.3.0)(@types/react@18.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-table':
-        specifier: ^8.15.3
+        specifier: ^8.17.0
         version: 8.17.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tremor/react':
         specifier: ^3.16.2
@@ -81,7 +81,7 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0
       clsx:
-        specifier: ^2.1.0
+        specifier: ^2.1.1
         version: 2.1.1
       formidable:
         specifier: ^3.5.1
@@ -114,19 +114,19 @@ importers:
         specifier: ^0.0.4
         version: 0.0.4
       pnpm:
-        specifier: ^9.0.6
+        specifier: ^9.1.1
         version: 9.1.1
       prisma:
-        specifier: ^5.12.1
+        specifier: ^5.13.0
         version: 5.13.0
       react:
-        specifier: ^18
+        specifier: ^18.3.1
         version: 18.3.1
       react-dom:
-        specifier: ^18
+        specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-hook-form:
-        specifier: ^7.51.2
+        specifier: ^7.51.4
         version: 7.51.4(react@18.3.1)
       select:
         specifier: ^1.1.2
@@ -135,7 +135,7 @@ importers:
         specifier: ^0.8.0
         version: 0.8.0(typescript@5.4.5)
       tailwind-merge:
-        specifier: ^2.2.2
+        specifier: ^2.3.0
         version: 2.3.0
       tailwindcss-animate:
         specifier: ^1.0.7
@@ -147,7 +147,7 @@ importers:
         specifier: https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz
         version: https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz
       zod:
-        specifier: ^3.22.4
+        specifier: ^3.23.8
         version: 3.23.8
       zustand:
         specifier: ^4.5.2
@@ -169,31 +169,31 @@ importers:
         specifier: ^1.4.11
         version: 1.4.11
       '@types/node':
-        specifier: ^20
+        specifier: ^20.12.11
         version: 20.12.11
       '@types/react':
-        specifier: ^18
+        specifier: ^18.3.2
         version: 18.3.2
       '@types/react-dom':
-        specifier: ^18
+        specifier: ^18.3.0
         version: 18.3.0
       autoprefixer:
-        specifier: ^10.0.1
+        specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.38)
       eslint:
-        specifier: ^8
+        specifier: ^8.57.0
         version: 8.57.0
       eslint-config-next:
         specifier: 14.1.4
         version: 14.1.4(eslint@8.57.0)(typescript@5.4.5)
       postcss:
-        specifier: ^8
+        specifier: ^8.4.38
         version: 8.4.38
       tailwindcss:
-        specifier: ^3.3.0
+        specifier: ^3.4.3
         version: 3.4.3
       typescript:
-        specifier: ^5
+        specifier: ^5.4.5
         version: 5.4.5
 
 packages:
@@ -212,20 +212,6 @@ packages:
 
   '@auth/core@0.28.0':
     resolution: {integrity: sha512-/fh/tb/L4NMSYcyPoo4Imn8vN6MskcVfgESF8/ndgtI4fhD/7u7i5fTVzWgNRZ4ebIEGHNDbWFRxaTu1NtQgvA==}
-    peerDependencies:
-      '@simplewebauthn/browser': ^9.0.1
-      '@simplewebauthn/server': ^9.0.2
-      nodemailer: ^6.8.0
-    peerDependenciesMeta:
-      '@simplewebauthn/browser':
-        optional: true
-      '@simplewebauthn/server':
-        optional: true
-      nodemailer:
-        optional: true
-
-  '@auth/core@0.30.0':
-    resolution: {integrity: sha512-8AE4m/nk+4EIiVCJwxZAsJeAQuzpEC8M8768mmKVn60CGDdupKQkVhxbRlm5Qh7eNRCoFFME+0DvtaX2aXrYaA==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
       '@simplewebauthn/server': ^9.0.2
@@ -3342,16 +3328,6 @@ snapshots:
   '@antfu/ni@0.21.12': {}
 
   '@auth/core@0.28.0':
-    dependencies:
-      '@panva/hkdf': 1.1.1
-      '@types/cookie': 0.6.0
-      cookie: 0.6.0
-      jose: 5.3.0
-      oauth4webapi: 2.10.4
-      preact: 10.11.3
-      preact-render-to-string: 5.2.3(preact@10.11.3)
-
-  '@auth/core@0.30.0':
     dependencies:
       '@panva/hkdf': 1.1.1
       '@types/cookie': 0.6.0

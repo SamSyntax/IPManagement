@@ -28,10 +28,19 @@ const DeleteBtn = ({ id, session, simsId }: Props) => {
   const delAgent = async () => {
     try {
       const res = await deleteAgent(id, session);
-      toast({
-        title: "Agent has been deleted",
-        description: `Agent ${simsId} has been deleted successfully.`,
-      });
+      if (res.success) {
+        toast({
+          title: "Agent has been deleted",
+          description: `Agent ${simsId} has been deleted successfully.`,
+        });
+      }
+      if (res.error) {
+        toast({
+          title: "Ughh, something went wrong!",
+          description: res.error,
+          variant: "destructive",
+        });
+      }
       router.push("/agents");
     } catch (error) {
       console.error(error);

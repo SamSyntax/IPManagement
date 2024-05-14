@@ -5,8 +5,12 @@ import { Session } from "next-auth";
 import { revalidatePath } from "next/cache";
 
 export async function deleteAgent(id: string, requestor: Session) {
-	const requestorRole = requestor.user.role;
-
+	const requestorFetch = await prisma.agent.findUnique({
+		where: {
+			id: requestor.user.id,
+		},
+	});
+	const requestorRole = requestorFetch?.role;
 	try {
 		const agent = await prisma.agent.findUnique({
 			where: {

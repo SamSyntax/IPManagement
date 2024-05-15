@@ -37,12 +37,12 @@ const page = async () => {
         <RegisterAgent creatorRole={session.user.role} />
       </div>
       <div
-        className={`grid sm:gird-cols-1 md:grid-cols-3 xxl:grid-cols-6 gap-4 overflow-y-visible p-12`}>
+        className={`grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xxl:grid-cols-6 gap-4 overflow-y-visible p-12`}>
         {agents.map((agent) => {
           return (
             <div
               key={agent.id}
-              className="scale-100 hover:-translate-y-[2px]  transition-all ease-in-out duration-300 overflow-visible z-1 hover:z-10">
+              className="  scale-100 hover:-translate-y-[2px]  transition-all ease-in-out duration-300 overflow-visible z-1 hover:z-10">
               <AgentCard
                 createdAt={formDate(agent.createdAt)}
                 email={agent.email}

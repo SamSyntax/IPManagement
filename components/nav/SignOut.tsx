@@ -1,7 +1,7 @@
 "use server";
-import { auth, signOut } from "@/auth";
-import { Button } from "../ui/button";
+import { signOut } from "@/auth";
 import { LogOut } from "lucide-react";
+import { Button } from "../ui/button";
 
 const SignOut = async () => {
   return (

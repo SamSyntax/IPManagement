@@ -50,6 +50,7 @@
 		"react-dom": "^18.3.1",
 		"react-hook-form": "^7.51.4",
 		"select": "^1.1.2",
+		"server-only": "^0.0.1",
 		"shadcn-ui": "^0.8.0",
 		"tailwind-merge": "^2.3.0",
 		"tailwindcss-animate": "^1.0.7",

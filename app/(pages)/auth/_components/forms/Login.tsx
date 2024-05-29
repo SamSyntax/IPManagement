@@ -99,7 +99,7 @@ const AuthWrapper = ({ ...props }) => {
                       <FormItem>
                         <Label htmlFor="password">Password</Label>
                         <FormControl>
-                          <div className="flex space-x-4">
+                          <div className="flex relative space-x-4">
                             <Input
                               type={isVisible ? "text" : "password"}
                               id="password"
@@ -112,6 +112,7 @@ const AuthWrapper = ({ ...props }) => {
                               variant="ghost"
                               type="button"
                               disabled={isPending}
+                              className="absolute right-0"
                               onClick={() => setIsVisible(!isVisible)}>
                               {isVisible ? <EyeIcon /> : <EyeClosedIcon />}
                             </Button>

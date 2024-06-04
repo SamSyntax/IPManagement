@@ -10,9 +10,12 @@ const SignOut = async () => {
         action={async () => {
           "use server";
           await signOut();
-        }}
-      >
-        <Button size="icon" variant="outline" type="submit">
+        }}>
+        <Button
+          size="icon"
+          className=" flex items-center justify-center p-1 w-8 h-8"
+          variant="outline"
+          type="submit">
           <LogOut />
         </Button>
       </form>

@@ -19,7 +19,11 @@ const NavSide = async () => {
       </div>
 
       <div className="flex flex-col xl:flex-row items-center justify-center gap-4 w-full ">
-        <Button variant={"outline"} asChild size={"icon"}>
+        <Button
+          variant={"outline"}
+          asChild
+          size={"icon"}
+          className=" flex items-center justify-center p-1 w-8 h-8">
           <Link href={`/agent/${session?.user.id}`}>
             <User />
           </Link>

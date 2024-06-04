@@ -27,17 +27,18 @@ const page = async () => {
         <SheetIcon size={40} />
         <h1 className="text-3xl font-bold">List of Agents</h1>
       </div>
-      <div
-        className={
-          session.user.role === "USER_ADMIN" ||
-          session.user.role === "GLOBAL_ADMIN"
-            ? `col-span-full flex items-center justify-start w-full p-4`
-            : "hidden"
-        }>
-        <RegisterAgent creatorRole={session.user.role} />
-      </div>
+
       <div
         className={`grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xxl:grid-cols-6 gap-4 overflow-y-visible p-12`}>
+        <div
+          className={
+            session.user.role === "USER_ADMIN" ||
+            session.user.role === "GLOBAL_ADMIN"
+              ? `col-span-full flex items-center justify-start w-full `
+              : "hidden"
+          }>
+          <RegisterAgent creatorRole={session.user.role} />
+        </div>
         {agents.map((agent) => {
           return (
             <div

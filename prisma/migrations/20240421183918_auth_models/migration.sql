@@ -46,3 +46,4 @@ CREATE TABLE "Account" (
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Agent"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
